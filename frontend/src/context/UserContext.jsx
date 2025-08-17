@@ -1,17 +1,24 @@
-import { createContext, useEffect } from "react";
+import { createContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+
 
 export const UserContext = createContext();
 
 const UserContextProvider = ({children}) => {
 
-    const backendUrl = import.meta.env.VITE_BACKEND_URL
+    
      
     const [token,setToken] = useState('')
 
     const navigate = useNavigate()
 
-    const value = {token,backendUrl,navigate}
+    const [balance, setBalance] = useState(null)
+
+    const [income, setIncome] = useState(null)
+
+    const [expense , setExpense] = useState(null)
+
+    const value = {navigate,token,balance,income, expense}
 
     useEffect( ()=> {
 
@@ -30,4 +37,6 @@ const UserContextProvider = ({children}) => {
         </UserContext.Provider>
     )
 }
+
+export default UserContextProvider
 

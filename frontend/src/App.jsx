@@ -4,15 +4,18 @@ import DashboardLayout from './Layout/DashboardLayout'
 import Login from './pages/Login.jsx';
 import Dashboard from './pages/Dashboard.jsx';
 import Income from './pages/Income.jsx';
-import Transaction from './pages/Transaction.jsx';
+import Expense from './pages/Expense.jsx';
 import Budget from './pages/Budget.jsx';
 import Report from './pages/Report.jsx'
+import UserContextProvider from './context/UserContext.jsx';
 
 const App = () => {
 
   return (
 
-    <div className='bg-[#0f0f1a] h-screen'>
+   <UserContextProvider>
+
+    <div className='h-screen'>
         
            <Routes>
 
@@ -20,9 +23,9 @@ const App = () => {
               <Route path="/login" element = {<Login />}/>
 
               <Route element={<DashboardLayout/>}>
-                 <Route path="/dashboard" element={<Dashboard />} />
-                 <Route path="/income" element={<Income />} />
-                 <Route path="/transaction" element={<Transaction />} />
+                 <Route path="/Dashboard" element={<Dashboard />} />
+                 <Route path="/Income" element={<Income />} />
+                 <Route path="/Expense" element={<Expense />} />
                  <Route path="/budget" element={<Budget />} />
                  <Route path="/report" element={<Report />} />
               </Route>
@@ -31,6 +34,7 @@ const App = () => {
            </Routes>
         
     </div>
+    </UserContextProvider>
   )
 }
 

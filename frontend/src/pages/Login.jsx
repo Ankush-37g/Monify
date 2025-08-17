@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { assets } from '../assets/assets';
+import { UserContext } from '../context/UserContext';
 
 // This is the main component for the sign-up page.
 // It features a two-column layout that is responsive,
@@ -11,6 +12,8 @@ const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+
+  const {navigate} =  useContext(UserContext)
 
   // A simple function to handle the form submission.
   const handleSubmit = (e) => {
@@ -63,7 +66,7 @@ const Login = () => {
       {/* Right panel - the main sign-up form */}
       <div className="flex flex-col items-center justify-center w-full md:w-1/2 lg:w-3/5 p-4 sm:p-8 bg-gradient-to-br from-green-400 to-green-700 rounded-l-[40px] md:rounded-l-none">
 
-        <div className="w-full max-w-lg p-6 sm:p-10 rounded-3xl backdrop-blur-sm bg-black shadow-xl">
+        <div className="w-full max-w-lg p-6 sm:p-10 rounded-3xl backdrop-blur-sm bg-green-950 shadow-xl">
 
           {/* Form header */}
           <div className="mb-8 text-center text-white">
@@ -150,8 +153,9 @@ const Login = () => {
 
             {/* Sign Up Button */}
             <button
+              onClick={()=> navigate('/dashboard')}
               type="submit"
-              className="w-full py-3 bg-white/90 text-green-700 font-bold text-lg rounded-xl shadow-lg hover:bg-white transition-colors duration-300 transform hover:scale-105"
+              className="w-full py-3 bg-white/90 text-green-700 font-bold text-lg rounded-xl shadow-lg hover:bg-white transition-colors duration-300 transform hover:scale-105 cursor-pointer"
             >
               {currentState==='login' ? "Login"
                :currentState ==='signUp' ? "Sign Up"
@@ -168,10 +172,13 @@ const Login = () => {
 
             {
               currentState === 'login'
-              ?  <p onClick={()=>setCurrentState('signUp')} className="font-bold underline hover:text-white transition-colors cursor-pointer">
+              ?  <p onClick={()=> { setCurrentState('signUp') }} className="font-bold underline hover:text-white transition-colors cursor-pointer">
                     Sign Up
                  </p>
-              :  <p onClick={()=>setCurrentState('login')} className="font-bold underline hover:text-white transition-colors cursor-pointer">
+              :  <p onClick={()=>{
+                       setCurrentState('login')
+                      
+                      }} className="font-bold underline hover:text-white transition-colors cursor-pointer">
                     Login
                  </p>
             }
