@@ -57,7 +57,7 @@ export default function DashboardLayout() {
 
       <div className="flex pt-12 md:w-full">
 
-          <div className={`hidden md:block  text-white fixed top-12 left-0  h-screen w-64 `}>
+          <div className={`hidden md:block fixed top-12 left-0  h-screen w-64 `}>
             <Sidebar />
           </div>
 
