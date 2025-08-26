@@ -1,0 +1,50 @@
+import React from 'react'
+import { IoMenuOutline } from "react-icons/io5";
+import { RxCross2 } from "react-icons/rx";
+import { assets } from "../assets/assets";
+import { UserContext } from '../context/UserContext';
+import { useContext } from 'react';
+
+
+const Header = ({visible,setVisible}) => {
+
+    const {navigate,token} = useContext(UserContext)
+    
+
+  return (
+
+     <div className="fixed top-0 left-0 right-0 z-50  h-18 flex justify-between backdrop-blur-lg bg-gray-950 ">
+    
+                <div className="flex items-center ml-1">
+    
+                  {
+                    visible ? <RxCross2 onClick={()=>setVisible(false)} className={`md:hidden w-7 h-7  text-white bg-black cursor-pointer `} /> 
+    
+                    : <IoMenuOutline onClick={()=>setVisible(true)}
+                    className={`md:hidden block w-7 h-7  text-white bg-black cursor-pointer `}/>
+    
+                  }
+                
+                  
+                 <div className='flex items-center gap-2 ml-2'>
+                     <img className="hidden md:block w-10 " src={assets.logo3} alt="logo" />
+                     <p className='text-gray-200 text-4xl font-bold'>Monify</p>
+                 </div>
+                  
+                  
+                </div>
+    
+                <p className="md:hidden text-white font-bold text-3xl">Monify</p>
+    
+                
+               <button onClick={()=>navigate('/login')} className="bg-teal-500 text-white font-bold lg:px-5 py-2 rounded-3xl my-auto mr-4  cursor-pointer transition-color transition-transform delay-50 hover:scale-110 hover:bg-teal-600 ">
+                        Login
+                </button>
+                
+              
+          
+     </div>
+  )
+}
+
+export default Header

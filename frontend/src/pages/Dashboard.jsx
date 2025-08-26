@@ -22,9 +22,9 @@ const Dashboard = () => {
           label: "",
           data: [150, 100, 50], // Values for each slice
           backgroundColor: [
-            "rgba(0, 255, 0, 0.7)",
-            "rgba(0, 0, 255, 0.65)",
-            "rgba(255, 0, 0, 0.8)",
+             "rgba(20, 184, 166, 1)", // Teal
+             "rgba(59, 130, 246, 1)", // Blue
+             "rgba(239, 68, 68, 1)", // Red
           ],
           borderColor: [
             ""
@@ -42,23 +42,23 @@ const Dashboard = () => {
         <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7 lg:gap-20 sm:gap-15 w-full '>
 
            {/* Balance */}
-            <div className="bg-green-500 rounded-xl shadow-lg p-6 text-white transform transition-transform duration-300 hover:scale-105 hover:shadow-xl overflow-hidden w-full max-w-sm mx-auto ">
+            <div className="bg-gray-900 rounded-xl shadow-lg p-6 text-white transform transition-transform duration-300 hover:scale-105 hover:shadow-xl overflow-hidden w-full max-w-sm mx-auto border-3 border-green-500 ">
 
                <div className='flex items-center justify-between'>
                    <p className="text-sm font-semibold tracking-wide uppercase">
                               Total Balance
                    </p>
 
-                   <MdAccountBalanceWallet className='w-7 h-7' />
+                   <MdAccountBalanceWallet className='w-7 h-7 text-teal-600' />
 
                </div>
              
-               <p className="mt-4 text-3xl font-extrabold">$4,000.00</p>
+               <p className="mt-4 text-3xl font-extrabold text-teal-600">$4,000.00</p>
 
             </div>
 
               {/* Income */}
-             <div className="bg-blue-500 rounded-xl shadow-lg p-6 text-white transform transition-transform duration-300 hover:scale-105 hover:shadow-xl overflow-hidden w-full max-w-sm  mx-auto">
+             <div className="bg-gray-900 rounded-xl shadow-lg p-6 text-white transform transition-transform duration-300 hover:scale-105 hover:shadow-xl overflow-hidden w-full max-w-sm  mx-auto border-3 border-blue-500">
 
               <div className='flex items-center justify-between'>
 
@@ -66,15 +66,15 @@ const Dashboard = () => {
                   Total Income
                  </p>
 
-                 <FaArrowTrendUp className='w-7 h-7' />
+                 <FaArrowTrendUp className='w-7 h-7 text-blue-500' />
 
               </div>
                
-              <p className="mt-4 text-3xl font-extrabold">$4,000.00</p>
+              <p className="mt-4 text-3xl font-extrabold text-blue-500">$4,000.00</p>
             </div>
 
              {/* Expenses */}
-             <div className="bg-red-500 rounded-xl shadow-lg p-6 text-white transform transition-transform duration-300 hover:scale-105 hover:shadow-xl overflow-hidden w-full max-w-sm mx-auto">
+             <div className="bg-gray-900 rounded-xl shadow-lg p-6 text-white transform transition-transform duration-300 hover:scale-105 hover:shadow-xl overflow-hidden w-full max-w-sm mx-auto border-3 border-red-500">
 
                  <div className='flex items-center justify-between'>
 
@@ -83,34 +83,59 @@ const Dashboard = () => {
                    </p>
                    
                    
-                   <FaArrowTrendDown className='w-7 h-7'/>
+                   <FaArrowTrendDown className='w-7 h-7 text-red-500'/>
                    
                   </div>
-               <p className="mt-4 text-3xl font-extrabold">$4,000.00</p>
+               <p className="mt-4 text-3xl font-extrabold text-red-500">$4,000.00</p>
             </div>
 
         </div>
 
         
-        <div className='grid grid-cols-1 lg:grid-cols-2 gap-4  w-full '>
+        <div className='grid grid-cols-1 lg:grid-cols-2 gap-4  w-full text-gray-200'>
 
              {/* Recent Transactions */}
-             <div className='border border-amber-100 p-5 shadow-lg bg-white rounded-xl w-full sm:max-w-xl  h-110 '>
+             <div className='border border-amber-100 p-5 shadow-lg bg-gray-900 rounded-xl w-full sm:max-w-xl  h-110 '>
 
                  <div className='flex justify-between items-center'>
 
-                     <p className='text-xl font-semibold'>Recent Transactions</p>
+                     <p className='text-3xl font-semibold'>Recent Transactions</p>
 
-                     <div className='bg-gray-200 flex gap-1.5 items-center justify-center px-2 py-1 rounded-xl transition duration-280 hover:scale-105 hover:shadow-xl cursor-pointer'>
+                     <div className='bg-gray-700 flex gap-1.5 items-center justify-center px-2 py-1 rounded-xl transition duration-280 hover:scale-105 hover:shadow-xl cursor-pointer'>
                           <p>See All</p>
                           <IoArrowForward />
 
                      </div>
                  </div>
 
-                 <div className='flex flex-col-reverse mt-6 gap-3'>
+                 <div className='flex flex-col-reverse mt-6 gap-3 '>
 
-                    <div className='flex justify-between items-center'>
+                    <div className='flex justify-between items-center p-3 '>
+
+                      <div className='flex gap-3 items-center'>
+
+                         <img className='w-7 rounded-full overflow-hidden object-cover ' src={assets.logo2} alt="" />
+
+                         <div className='flex flex-col'>
+
+                           <p className='font-semibold'>Shopping</p>
+                           <p className='font-light'>15th Aug 2025</p>
+                           
+                         </div>
+
+                      </div>
+                       
+                       <div className='px-3 py-1 bg-teal-600 flex items-center gap-2 rounded-xl'>
+
+                          <p>+$10000</p>
+                          <FaArrowTrendUp className='w-3 h-3' />
+
+                       </div>
+
+
+                    </div>
+
+                    <div className='flex justify-between items-center p-3'>
 
                       <div className='flex gap-3 items-center'>
 
@@ -125,7 +150,7 @@ const Dashboard = () => {
 
                       </div>
                        
-                       <div className='px-3 py-1 bg-green-300 flex items-center gap-2 rounded-xl'>
+                       <div className='px-3 py-1 bg-teal-600 flex items-center gap-2 rounded-xl'>
 
                           <p>+$10000</p>
                           <FaArrowTrendUp className='w-3 h-3' />
@@ -135,7 +160,7 @@ const Dashboard = () => {
 
                     </div>
 
-                    <div className='flex justify-between items-center'>
+                    <div className='flex justify-between items-center p-3'>
 
                       <div className='flex gap-3 items-center'>
 
@@ -150,7 +175,7 @@ const Dashboard = () => {
 
                       </div>
                        
-                       <div className='px-3 py-1 bg-green-300 flex items-center gap-2 rounded-xl'>
+                       <div className='px-3 py-1 bg-teal-600 flex items-center gap-2 rounded-xl'>
 
                           <p>+$10000</p>
                           <FaArrowTrendUp className='w-3 h-3' />
@@ -160,7 +185,7 @@ const Dashboard = () => {
 
                     </div>
 
-                    <div className='flex justify-between items-center'>
+                    <div className='flex justify-between items-center p-3'>
 
                       <div className='flex gap-3 items-center'>
 
@@ -175,7 +200,7 @@ const Dashboard = () => {
 
                       </div>
                        
-                       <div className='px-3 py-1 bg-green-300 flex items-center gap-2 rounded-xl'>
+                       <div className='px-3 py-1 bg-teal-600 flex items-center gap-2 rounded-xl'>
 
                           <p>+$10000</p>
                           <FaArrowTrendUp className='w-3 h-3' />
@@ -185,64 +210,16 @@ const Dashboard = () => {
 
                     </div>
 
-                    <div className='flex justify-between items-center'>
-
-                      <div className='flex gap-3 items-center'>
-
-                         <img className='w-7 rounded-full overflow-hidden object-cover bg-gray-100' src={assets.logo2} alt="" />
-
-                         <div className='flex flex-col'>
-
-                           <p className='font-semibold'>Shopping</p>
-                           <p className='font-light'>15th Aug 2025</p>
-                           
-                         </div>
-
-                      </div>
-                       
-                       <div className='px-3 py-1 bg-green-300 flex items-center gap-2 rounded-xl'>
-
-                          <p>+$10000</p>
-                          <FaArrowTrendUp className='w-3 h-3' />
-
-                       </div>
-
-
-                    </div>
-
-                    <div className='flex justify-between items-center'>
-
-                      <div className='flex gap-3 items-center'>
-
-                         <img className='w-7 rounded-full overflow-hidden object-cover bg-gray-100' src={assets.logo2} alt="" />
-
-                         <div className='flex flex-col'>
-
-                           <p className='font-semibold'>Shopping</p>
-                           <p className='font-light'>15th Aug 2025</p>
-                           
-                         </div>
-
-                      </div>
-                       
-                       <div className='px-3 py-1 bg-green-300 flex items-center gap-2 rounded-xl'>
-
-                          <p>+$10000</p>
-                          <FaArrowTrendUp className='w-3 h-3' />
-
-                       </div>
-
-
-                    </div>
+                    
                  </div>
 
                     
              </div>
 
             {/* Financial Overview Pie Chart */}
-            <div className='border-0 px-5 pt-5 pb-10 shadow-lg bg-white rounded-xl w-full sm:max-w-xl  items-center justify-center h-110 '>
+            <div className='border-0 px-5 pt-5 pb-10 shadow-lg bg-gray-900 rounded-xl w-full sm:max-w-xl  items-center justify-center h-110 '>
 
-              <p className='text-xl font-semibold mb-2'>Financial Overview</p>
+              <p className='text-3xl font-semibold mb-2'>Financial Overview</p>
               <Doughnut 
                 data={data}
                 options={{
@@ -258,17 +235,17 @@ const Dashboard = () => {
                     },
                   },
                 },
-              }} className="w-full h-full" />
+              }} className="w-full h-full mb-3" />
             </div>  
            
             {/* Expenses */}
-            <div className='border border-amber-100 p-5 shadow-lg bg-white rounded-xl w-full sm:max-w-xl h-110 '>
+            <div className='border border-amber-100 p-5 shadow-lg bg-gray-900 rounded-xl w-full sm:max-w-xl h-110 '>
 
                  <div className='flex justify-between items-center'>
 
-                     <p className='text-xl font-semibold'>Expenses</p>
+                     <p className='text-3xl font-semibold'>Expenses</p>
 
-                     <div className='bg-gray-200 flex gap-1.5 items-center justify-center px-2 py-1 rounded-xl transition duration-280 hover:scale-105 hover:shadow-xl cursor-pointer'>
+                     <div className='bg-gray-700 flex gap-1.5 items-center justify-center px-2 py-1 rounded-xl transition duration-280 hover:scale-105 hover:shadow-xl cursor-pointer'>
                           <p>See All</p>
                           <IoArrowForward />
 
@@ -277,7 +254,7 @@ const Dashboard = () => {
 
                  <div className='flex flex-col-reverse mt-6 gap-3'>
 
-                    <div className='flex justify-between items-center'>
+                    <div className='flex justify-between items-center p-3'>
 
                       <div className='flex gap-3 items-center'>
 
@@ -292,7 +269,32 @@ const Dashboard = () => {
 
                       </div>
                        
-                       <div className='px-3 py-1 bg-red-300 flex items-center gap-2 rounded-xl'>
+                       <div className='px-3 py-1 bg-red-400 flex items-center gap-2 rounded-xl'>
+
+                          <p>+$10000</p>
+                          <FaArrowTrendDown className='w-3 h-3'/>
+
+                       </div>
+
+
+                    </div>
+     
+                    <div className='flex justify-between items-center p-3'>
+
+                      <div className='flex gap-3 items-center'>
+
+                         <img className='w-7 rounded-full overflow-hidden object-cover bg-gray-100' src={assets.logo2} alt="" />
+
+                         <div className='flex flex-col'>
+
+                           <p className='font-semibold'>Shopping</p>
+                           <p className='font-light'>15th Aug 2025</p>
+                           
+                         </div>
+
+                      </div>
+                       
+                       <div className='px-3 py-1 bg-red-400 flex items-center gap-2 rounded-xl'>
 
                           <p>+$10000</p>
                           <FaArrowTrendDown className='w-3 h-3'/>
@@ -302,8 +304,7 @@ const Dashboard = () => {
 
                     </div>
 
-                   
-                    <div className='flex justify-between items-center'>
+                    <div className='flex justify-between items-center p-3'>
 
                       <div className='flex gap-3 items-center'>
 
@@ -318,7 +319,7 @@ const Dashboard = () => {
 
                       </div>
                        
-                       <div className='px-3 py-1 bg-red-300 flex items-center gap-2 rounded-xl'>
+                       <div className='px-3 py-1 bg-red-400 flex items-center gap-2 rounded-xl'>
 
                           <p>+$10000</p>
                           <FaArrowTrendDown className='w-3 h-3'/>
@@ -328,7 +329,7 @@ const Dashboard = () => {
 
                     </div>
 
-                                        <div className='flex justify-between items-center'>
+                    <div className='flex justify-between items-center p-3'>
 
                       <div className='flex gap-3 items-center'>
 
@@ -343,57 +344,7 @@ const Dashboard = () => {
 
                       </div>
                        
-                       <div className='px-3 py-1 bg-red-300 flex items-center gap-2 rounded-xl'>
-
-                          <p>+$10000</p>
-                          <FaArrowTrendDown className='w-3 h-3'/>
-
-                       </div>
-
-
-                    </div>
-
-                                        <div className='flex justify-between items-center'>
-
-                      <div className='flex gap-3 items-center'>
-
-                         <img className='w-7 rounded-full overflow-hidden object-cover bg-gray-100' src={assets.logo2} alt="" />
-
-                         <div className='flex flex-col'>
-
-                           <p className='font-semibold'>Shopping</p>
-                           <p className='font-light'>15th Aug 2025</p>
-                           
-                         </div>
-
-                      </div>
-                       
-                       <div className='px-3 py-1 bg-red-300 flex items-center gap-2 rounded-xl'>
-
-                          <p>+$10000</p>
-                          <FaArrowTrendDown className='w-3 h-3'/>
-
-                       </div>
-
-
-                    </div>
-
-                                        <div className='flex justify-between items-center'>
-
-                      <div className='flex gap-3 items-center'>
-
-                         <img className='w-7 rounded-full overflow-hidden object-cover bg-gray-100' src={assets.logo2} alt="" />
-
-                         <div className='flex flex-col'>
-
-                           <p className='font-semibold'>Shopping</p>
-                           <p className='font-light'>15th Aug 2025</p>
-                           
-                         </div>
-
-                      </div>
-                       
-                       <div className='px-3 py-1 bg-red-300 flex items-center gap-2 rounded-xl'>
+                       <div className='px-3 py-1 bg-red-400 flex items-center gap-2 rounded-xl'>
 
                           <p>+$10000</p>
                           <FaArrowTrendDown className='w-3 h-3'/>
@@ -410,12 +361,11 @@ const Dashboard = () => {
                     
             </div>
 
-                 
 
              {/* Last 30 days Expense */}
-             <div className='border-0 px-5 pt-5 pb-10 shadow-lg bg-white rounded-xl w-full sm:max-w-xl  items-center justify-center h-110 '>
+             <div className='border-0 px-5 pt-5 pb-2 shadow-lg bg-gray-900 rounded-xl w-full sm:max-w-xl  items-center justify-center h-110 '>
 
-              <p className='text-xl font-semibold mb-2'>Last 30 Days Expenses</p>
+              <p className='text-3xl font-semibold mb-2'>Last 30 Days Expenses</p>
               <Bar 
                   data ={{
                     labels: ["Week 1", "Week 2", "Week 3", "Week 4"],
@@ -431,6 +381,7 @@ const Dashboard = () => {
 
                   options = {{
                     responsive: true,
+                    maintainAspectRatio:false,
                     plugins: {
                       legend: { display: false }, // hide legend
                       title: { display: false },
@@ -445,13 +396,13 @@ const Dashboard = () => {
                     },
                   }}
                 
-              className="w-full h-full mt-8" />
+              className="w-full h-full mb-10 " />
             </div>  
 
              {/* Last 60 days Income */}
-             <div className='border-0 px-5 pt-5 pb-10 shadow-lg bg-white rounded-xl w-full sm:max-w-xl  items-center justify-center h-110 '>
+             <div className='border-0 px-5 pt-5 pb-10 shadow-lg bg-gray-900 rounded-xl w-full sm:max-w-xl  items-center justify-center h-110 '>
 
-                <p className='text-xl font-semibold mb-2'>Last 60 Days Income</p>
+                <p className='text-3xl font-semibold mb-2'>Last 60 Days Income</p>
 
                 <Doughnut 
                       data={{
@@ -484,28 +435,28 @@ const Dashboard = () => {
                             labels: {
                               boxWidth: 18,
                               padding: 12,
-                              color: "#374151", // dark gray text
+                              color: "gray", // dark gray text
                               font: {
-                                size: 13,
+                                size: 12,
                               },
                             },
                           },
                         },
                       }}
-                      className="w-full h-full"
+                      className="w-full h-full mb-3"
                     />
 
 
              </div> 
 
               {/* Income */}
-             <div className='border border-amber-100 p-5 shadow-lg bg-white rounded-xl w-full sm:max-w-xl h-110 '>
+             <div className='border border-amber-100 p-5 shadow-lg bg-gray-900 rounded-xl w-full sm:max-w-xl h-110 '>
 
                  <div className='flex justify-between items-center'>
 
-                     <p className='text-xl font-semibold'>Income</p>
+                     <p className='text-3xl font-semibold'>Income</p>
 
-                     <div onClick={()=>navigate('/Income')} className='bg-gray-200 flex gap-1.5 items-center justify-center px-2 py-1 rounded-xl transition duration-280 hover:scale-105 hover:shadow-xl cursor-pointer'>
+                     <div onClick={()=>navigate('/Income')} className='bg-gray-700 flex gap-1.5 items-center justify-center px-2 py-1 rounded-xl transition duration-280 hover:scale-105 hover:shadow-xl cursor-pointer'>
                           <p>See All</p>
                           <IoArrowForward />
 

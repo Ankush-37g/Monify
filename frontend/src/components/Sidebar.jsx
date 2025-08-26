@@ -35,23 +35,17 @@ const Sidebar = () => {
 
   return (
 
-    <div className=" w-full h-full bg-white  shadow-xl p-6 flex flex-col justify-between transition-all duration-300 z-40">
-
+    <div className="w-full h-full bg-gray-950 shadow-xl p-6 flex flex-col justify-between transition-all duration-300 z-40">
       {/* Profile Section */}
-       <div className="flex flex-col items-center p-4">
-
-        <div className="relative w-24 h-24 mb-4 rounded-full bg-white border-4 border-green-200 overflow-hidden shadow-lg">
-
+      <div className="flex flex-col items-center p-4">
+        <div className="relative w-24 h-24 mb-4 rounded-full bg-gray-800 border-4 border-teal-400 overflow-hidden shadow-lg">
           <img
             src="https://placehold.co/100x100/A0B2C9/FFFFFF?text=User"
             alt="User profile"
             className="object-cover w-full h-full"
           />
-
         </div>
-
-        <h2 className="text-xl font-bold text-black mb-8">Ankush Sharma</h2>
-
+        <h2 className="text-xl font-bold text-white mb-8">Ankush Sharma</h2>
       </div>
 
       {/* Navigation Links */}
@@ -59,36 +53,32 @@ const Sidebar = () => {
 
         <ul className="space-y-4">
 
-          {
-            navItems.map((item, index) => {
+          {navItems.map((item, index) => {
 
-              const isActive = activeIndex === index || location.pathname === `/${item.name}`
+            const isActive = activeIndex === index || location.pathname === `/${item.name}`;
 
-              return(
-                  <li key={index} >
+            return (
 
-                      <Link to={`/${item.name}`}
-              
-                        onClick={()=>setActiveIndex(index)}
+              <li key={index}>
 
-                        className={`flex items-center space-x-4 p-3 rounded-xl transition-colors duration-200 
-                          ${isActive ? 'bg-green-600 text-white shadow-md' : 'text-black hover:bg-green-100'}`}
-                      >
+                <Link 
+                  to={`/${item.name}`}
 
-                          {item.icon}
+                  onClick={() => {
+                    setActiveIndex(index);
+                    navigate("/item.name");
+                  }}
 
-                          <span className="font-semibold text-lg">{item.name}</span>
+                  className={`flex items-center space-x-4 p-3 rounded-xl w-full text-left transition-colors duration-200 
+                  ${isActive ? 'bg-teal-600 text-white shadow-md' : 'text-gray-300 hover:bg-gray-800 hover:text-white'}`}
+                >
+                  {item.icon}
+                  <span className="font-semibold text-lg">{item.name}</span>
+                </Link>
 
-                      </Link>
-
-                  </li>
-              )
-
-           
-            })
-
-          }
-
+              </li>
+            );
+          })}
         </ul>
       </nav>
     </div>

@@ -7,7 +7,9 @@ import Income from './pages/Income.jsx';
 import Expense from './pages/Expense.jsx';
 import Budget from './pages/Budget.jsx';
 import Report from './pages/Report.jsx'
+import Home from './pages/Home.jsx'
 import UserContextProvider from './context/UserContext.jsx';
+
 
 const App = () => {
 
@@ -15,7 +17,7 @@ const App = () => {
 
    <UserContextProvider>
 
-    <div className='h-screen'>
+     <div className='h-screen'>
         
            <Routes>
 
@@ -23,7 +25,8 @@ const App = () => {
               <Route path="/login" element = {<Login />}/>
 
               <Route element={<DashboardLayout/>}>
-                 <Route path="/Dashboard" element={<Dashboard />} />
+                 <Route path="/Home" element={<Home />} />
+                 <Route path="/dashboard" element={<Dashboard />} />
                  <Route path="/Income" element={<Income />} />
                  <Route path="/Expense" element={<Expense />} />
                  <Route path="/budget" element={<Budget />} />
@@ -33,7 +36,8 @@ const App = () => {
 
            </Routes>
         
-    </div>
+     </div>
+
     </UserContextProvider>
   )
 }
@@ -42,7 +46,7 @@ const Root = () => {
 
    const storedToken = localStorage.getItem('token')
 
-   return storedToken ? <Navigate to="/dashboard" /> : <Navigate to="/login" />;
+   return storedToken ? <Navigate to="/dashboard" /> : <Navigate to="/Home" />;
 
 }
 
