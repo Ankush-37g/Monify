@@ -1,193 +1,260 @@
 import React, { useContext, useState } from 'react';
 import { assets } from '../assets/assets';
 import { UserContext } from '../context/UserContext';
+import axios from "axios"
+import {toast} from "react-toastify"
+import { GoogleLogin } from '@react-oauth/google';
 
-// This is the main component for the sign-up page.
-// It features a two-column layout that is responsive,
-// collapsing to a single column on small screens.
+
 const Login = () => {
 
+  
+
   const [currentState, setCurrentState] = useState('login')
-  const [fullName, setFullName] = useState('');
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
-  const {navigate} =  useContext(UserContext)
+  const {navigate,backendUrl} =  useContext(UserContext)
 
   // A simple function to handle the form submission.
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log({
-      fullName,
-      email,
-      password,
-      confirmPassword,
-    });
-    // Here you would typically add form validation and API calls.
+  const handleSubmit = async(e) => {
+
+      e.preventDefault();
+
+      try {
+        if(currentState === "signUp")
+        {
+          const response = await axios.post(backendUrl + "/api/user/signup",{name,email,password})
+
+          console.log(response.data);
+
+          if(response.data.success)
+          {
+             toast.success("Account created Successfully")
+
+             setCurrentState("login")
+          }
+        }
+        else if(currentState === "login")
+        {
+            const response = await axios.post(backendUrl + "/api/user/login",{email,password})
+
+            console.log(response.data)
+
+            if(response.data.success)
+            {
+              toast.success("Login Successfull")
+
+              navigate('/dashboard')
+            }
+        }
+        else if(currentState === "resetPassword")
+        {
+            const response = await axios.post(backendUrl + "/api/user/resetPassword",{email,password,confirmPassword})
+
+            console.log(response.data)
+
+            if(response.data.success)
+            {
+              
+            }
+        }
+      } catch (error) {
+
+        
+          if (error.response) {
+              // This will log your backend's JSON error message
+              console.log(error.response.data);
+              
+          } else {
+              // Network or other error
+              console.log(error.message)
+          }
+      }
+      
+      
   };
 
+  
+
+
   return (
-    // Main container for the entire page.
-    // It uses flexbox to create the two-column layout on larger screens.
-    <div className="flex min-h-screen bg-gray-100 font-sans">
-
-      {/* Left panel - visible only on medium and larger screens */}
-      <div className="hidden md:flex flex-col items-center justify-between p-8 bg-white w-1/2  rounded-r-[40px] shadow-lg">
-
-        <div className="flex flex-col items-start w-full">
-          {/* Using a simple div for the logo text */}
-          <div className="flex items-center space-x-2 mb-2">
-
-            <div className="w-8 h-8 rounded-full bg-green-500"></div>
-            <span className="text-xl font-bold text-gray-800">Monify, Inc.</span>
-
-          </div>
-
-          <p className="text-sm text-gray-500">123 Anywhere St., Kerala</p>
-
-        </div>
+ 
+    <div className="flex justify-center items-center bg-gray-950 font-sans h-screen">
       
-        {/* Placeholder for the 3D illustration */}
-        <div className="flex-grow flex items-center justify-center">
-          <img
-            src={assets.logo2}
-            alt="Person working at a desk"
-            className="object-contain"
-          />
-        </div>
-        
-        <div className="w-full text-center text-gray-400 text-sm mt-auto">
-          &copy; 2025 Monify, Inc. All rights reserved.
-        </div>
+      <div className='flex items-center gap-4 bg-gray-800  rounded-xl' >
 
-      </div>
-
-      {/* Right panel - the main sign-up form */}
-      <div className="flex flex-col items-center justify-center w-full md:w-1/2 lg:w-3/5 p-4 sm:p-8 bg-gradient-to-br from-green-400 to-green-700 rounded-l-[40px] md:rounded-l-none">
-
-        <div className="w-full max-w-lg p-6 sm:p-10 rounded-3xl backdrop-blur-sm bg-green-950 shadow-xl">
-
-          {/* Form header */}
-          <div className="mb-8 text-center text-white">
-
-            { 
-              currentState === 'signUp' ? ( <h1 className="text-3xl sm:text-4xl font-bold mb-2 drop-shadow-md">Create a New Account</h1> )
-
-              : currentState==='login' ?  (<h1 className="text-3xl sm:text-4xl font-bold mb-2 drop-shadow-md">Login</h1>)
-              
-              : <h1 className="text-3xl sm:text-4xl font-bold mb-2 drop-shadow-md">Reset Password</h1>
-            }
-
+          {/* Left panel - visible only on medium and larger screens */}
+          <div className="hidden  h-full md:w-1/2 shadow-lg bg-gradient-to-br from-cyan-500 to-teal-500 rounded-xl p-8 md:flex flex-col justify-center items-center">
+          {/* Using a placeholder for a growth chart to better visualize the app's purpose */}
+          <div className="text-center text-white space-y-4">
+            <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight drop-shadow-md mb-4">
+              Welcome to Monify Manage your money with ease!
+            </h2>
+            <img 
+              src={assets.logo}
+              alt="A visual representation of financial data" 
+              className="rounded-xl shadow-lg max-w-sm mx-auto"
+            />
           </div>
+         </div>
+         
+          {/* right panel */}
+          <div className="w-full md:w-1/2 rounded-xl backdrop-blur-sm  px-3 py-3">
 
-          {/* Sign-up form */}
-          <form onSubmit={handleSubmit} className="space-y-6">
+              {/* Form header */}
+              <div className="mb-8 text-center text-white">
 
-            {/* Full Name Input */}
-            {
-              currentState === 'signUp' ?
+                { 
+                  currentState === 'signUp' ? ( <h1 className="text-3xl text-teal-500 sm:text-4xl font-bold mb-2 drop-shadow-md">Create a New Account</h1> )
+
+                  : currentState==='login' ?  (<p className="text-5xl text-teal-500 sm:text-4xl font-bold mb-2 drop-shadow-md">Login</p>)
+                  
+                  : <h1 className="text-3xl text-teal-500 sm:text-4xl font-bold mb-2 drop-shadow-md">Reset Password</h1>
+                }
+
+              </div>
+
+              {/* Sign-up form */}
+              <form onSubmit={handleSubmit} className="space-y-6">
+
+                {/* Full Name Input */}
+                {
+                  currentState === 'signUp' ?
+                    <div>
+                      <div className="relative">
+                        <input
+                          type="text"
+                          id="name"
+                          value={name}
+                          onChange={(e) => setName(e.target.value)}
+                          placeholder="Full Name"
+                          className="peer w-full px-4 py-3 bg-white/20 text-white  rounded-xl border border-white/30 focus:border-white focus:outline-none focus:ring-1 focus:ring-white transition-all duration-300"
+                        />
+                      
+                      </div>
+                    </div>
+                    : ""
+                }
+                
+
+                {/* Email Input */}
+                
+                <div>
+                    <div className="relative">
+                      <input
+                        type="email"
+                        id="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        placeholder="Email Address "
+                        className="peer w-full px-4 py-3 bg-white/20 text-white  rounded-xl border border-white/30 focus:border-white focus:outline-none focus:ring-1 focus:ring-white transition-all duration-300"
+                      />
+                    
+                    </div>
+                </div> 
+                
+
+                {/* Password Input */}
                 <div>
                   <div className="relative">
                     <input
-                      type="text"
-                      id="fullName"
-                      value={fullName}
-                      onChange={(e) => setFullName(e.target.value)}
-                      placeholder="Full Name"
-                      className="peer w-full px-4 py-3 bg-white/20 text-white  rounded-xl border border-white/30 focus:border-white focus:outline-none focus:ring-1 focus:ring-white transition-all duration-300"
+                      type="password"
+                      id="password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="Password"
+                      className="peer w-full px-4 py-3 pr-12 bg-white/20 text-white rounded-xl border border-white/30 focus:border-white focus:outline-none focus:ring-1 focus:ring-white transition-all duration-300"
                     />
                   
                   </div>
                 </div>
-                : ""
-            }
-            
 
-            {/* Email Input */}
-            { currentState === 'resetPassword' ? " "
-               :  
-               <div>
-                  <div className="relative">
+                {/* Confirm Password Input */}
+                { currentState !== 'resetPassword' ? " "
+                  : 
+                <div>
+                  <div>
                     <input
-                      type="email"
-                      id="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      placeholder="Email Address "
-                      className="peer w-full px-4 py-3 bg-white/20 text-white  rounded-xl border border-white/30 focus:border-white focus:outline-none focus:ring-1 focus:ring-white transition-all duration-300"
+                      type='password'
+                      id="confirmPassword"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      placeholder="Confirm Password"
+                      className="peer w-full px-4 py-3 pr-12 bg-white/20 text-white  rounded-xl border border-white/30 focus:border-white focus:outline-none focus:ring-1 focus:ring-white transition-all duration-300"
                     />
-                  
                   </div>
-               </div> 
-            }
+                </div>
+                } 
 
-            {/* Password Input */}
-            <div>
-              <div className="relative">
-                <input
-                  type="password"
-                  id="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Password"
-                  className="peer w-full px-4 py-3 pr-12 bg-white/20 text-white rounded-xl border border-white/30 focus:border-white focus:outline-none focus:ring-1 focus:ring-white transition-all duration-300"
-                />
+                {/* Sign Up Button */}
+                <button
+                  type="submit"
+                  className="w-full py-3 bg-teal-500 text-gray-200 font-bold text-lg rounded-xl shadow-lg hover:bg-teal-400 transition-colors duration-300  cursor-pointer"
+                >
+                  {currentState==='login' ? "Login"
+                  :currentState ==='signUp' ? "Sign Up"
+                  : "Reset Password"}
+                </button>
+
+              </form>
+
+              <div className='mt-6 flex items-center justify-center '>
+
+                  <GoogleLogin
+                      onSuccess={async (credentialResponse) => {
+                        const response = await axios.post(
+                          backendUrl + "/api/user/google",
+                          {
+                            token: credentialResponse.credential, // 👈 this is the id_token
+                          },
+                          { withCredentials: true }
+                        );
+
+                        if (response.data.success) {
+                          toast.success("Login Successful with Google");
+                          navigate("/dashboard");
+                        } else {
+                          toast.error("Google login failed on backend");
+                        }
+                      }}
+                      onError={() => {
+                        toast.error("Google Login Cancelled/Failed");
+                      }}
+                 />
+
+              </div>
                
+
+              {/* Log In link */}
+              <div className="mt-5 text-center text-white/90">
+
+                { currentState ==='signUp' ? <p>Already have an account? </p> : <p onClick={()=>setCurrentState("resetPassword")} className='cursor-pointer' > Forgot Password? </p>}
+
+
+                {
+                  currentState === 'login'
+                  ?  <p onClick={()=> { setCurrentState('signUp') }} className="font-bold underline hover:text-white transition-colors cursor-pointer">
+                        Sign Up
+                    </p>
+                  :  <p onClick={()=>{
+                          setCurrentState('login')
+                          
+                          }} className="font-bold underline hover:text-white transition-colors cursor-pointer">
+                        Login
+                    </p>
+                }
+
+              
+
               </div>
-            </div>
+            
+         </div>
 
-            {/* Confirm Password Input */}
-            <div>
-              <div>
-                <input
-                  type='password'
-                  id="confirmPassword"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  placeholder="Confirm Password"
-                  className="peer w-full px-4 py-3 pr-12 bg-white/20 text-white  rounded-xl border border-white/30 focus:border-white focus:outline-none focus:ring-1 focus:ring-white transition-all duration-300"
-                />
-              </div>
-            </div>
-
-            {/* Sign Up Button */}
-            <button
-              onClick={()=> navigate('/dashboard')}
-              type="submit"
-              className="w-full py-3 bg-white/90 text-green-700 font-bold text-lg rounded-xl shadow-lg hover:bg-white transition-colors duration-300 transform hover:scale-105 cursor-pointer"
-            >
-              {currentState==='login' ? "Login"
-               :currentState ==='signUp' ? "Sign Up"
-               : "Reset Password"}
-            </button>
-
-          </form>
-
-          {/* Log In link */}
-          <div className="mt-8 text-center text-white/90">
-
-            { currentState ==='signUp' ? <p>Already have an account? </p> : <p onClick={()=>setCurrentState("resetPassword")} className='cursor-pointer' > Forgot Password? </p>}
-
-
-            {
-              currentState === 'login'
-              ?  <p onClick={()=> { setCurrentState('signUp') }} className="font-bold underline hover:text-white transition-colors cursor-pointer">
-                    Sign Up
-                 </p>
-              :  <p onClick={()=>{
-                       setCurrentState('login')
-                      
-                      }} className="font-bold underline hover:text-white transition-colors cursor-pointer">
-                    Login
-                 </p>
-            }
-
-           
-
-          </div>
-        </div>
       </div>
+
 
     </div>
   );

@@ -2,6 +2,7 @@ import { useContext,useRef, useEffect } from 'react';
 import FeatureCard from '../components/FeatureCard';
 import { UserContext } from '../context/UserContext';
 import * as THREE from 'three';
+import { assets } from '../assets/assets.js';
 import {
   Wallet,
   PieChart,
@@ -11,9 +12,10 @@ import {
   Menu,
   X,
 } from 'lucide-react';
+import Header from '../components/Header.jsx';
 
 // Landing Page Content
-function Home() {
+function LandingPage() {
 
   const {navigate} = useContext(UserContext)
 
@@ -110,8 +112,16 @@ function Home() {
   }, []);
   return (
     <div className='text-gray-200'>
+
+      <Header/>
+
       {/* Hero Section */}
       <section className="relative min-h-[calc(100vh-80px)] flex items-center justify-center  text-center bg-gray-950">
+
+          <div
+            ref={mountRef}
+            className="absolute inset-0 z-10 pointer-events-none w-full h-full"
+         />
         <div className="container mx-auto max-w-4xl space-y-6">
           <h1 className="text-4xl sm:text-5xl lg:text-7xl font-extrabold leading-tight tracking-tighter text-gray-200">
             Take Control of Your <span className="text-teal-400">Finances</span>, Effortlessly.
@@ -168,8 +178,8 @@ function Home() {
       </section>
 
       {/* How It Works Section */}
-      <section className="py-20">
-        <div className="container mx-auto px-4 flex flex-col md:flex-row items-center gap-12">
+      <section className="py-20 bg-gray-950">
+        <div className="container mx-auto px-4 flex flex-col md:flex-row items-center gap-12 lg:justify-around">
           <div className="md:w-1/2">
             <h2 className="text-3xl sm:text-4xl font-bold mb-4">
               How Monify Works
@@ -192,14 +202,13 @@ function Home() {
               </li>
             </ul>
           </div>
-          <div className="md:w-1/2 flex justify-center">
-            {/* Placeholder for an image or mockup */}
-            <div className="w-full max-w-md h-72 bg-gray-800 rounded-lg shadow-xl flex items-center justify-center p-4">
-              <span className="text-gray-500 text-sm italic">
-                
-              </span>
-            </div>
-          </div>
+
+          
+           
+            
+          <img className='h-72 max-w-lg rounded-lg ' src={assets.image1} alt="" />
+            
+          
         </div>
       </section>
 
@@ -231,7 +240,7 @@ function Home() {
   );
 }
 
-export default Home;
+export default LandingPage;
 
 
 

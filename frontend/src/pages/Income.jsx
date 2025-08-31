@@ -24,20 +24,22 @@ const Income = () => {
       datasets: [
         {
           label: "Expenses",
+          
           data: [450, 700, 200, 600,100,250,1000,370],
+
           backgroundColor: (context) => {
-  const chart = context.chart;
-  const ctx = chart.ctx;
-  const chartArea = chart.chartArea;
-  if (!chartArea) {
-    // Chart hasn't been drawn yet
-    return null;
-  }
-  const gradient = ctx.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
-  gradient.addColorStop(0, "rgba(39, 200, 162, 0.6)");  // teal with opacity
-  gradient.addColorStop(1, "rgba(39, 200, 162, 0.2)"); // fade out
-  return gradient;
-},
+          const chart = context.chart;
+          const ctx = chart.ctx;
+          const chartArea = chart.chartArea;
+          if (!chartArea) {
+            // Chart hasn't been drawn yet
+            return null;
+          }
+          const gradient = ctx.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
+          gradient.addColorStop(0, "rgba(39, 200, 162, 0.6)");  // teal with opacity
+          gradient.addColorStop(1, "rgba(39, 200, 162, 0.2)"); // fade out
+          return gradient;
+          },
           borderRadius: 8,
         },
       ],

@@ -5,6 +5,8 @@ import { useNavigate } from "react-router-dom";
 export const UserContext = createContext();
 
 const UserContextProvider = ({children}) => {
+
+    const backendUrl = import.meta.env.VITE_BACKEND_URL
    
     const [token,setToken] = useState('')
 
@@ -12,22 +14,24 @@ const UserContextProvider = ({children}) => {
 
     const [balance, setBalance] = useState(null)
 
-    const [income, setIncome] = useState(null)
+    const [incomes, setIncomes] = useState([])
 
-    const [expense , setExpense] = useState(null)
+    const [expenses , setExpenses] = useState([])
 
-    const value = {navigate,token,balance,income, expense}
+    const [visible, setVisible] = useState(false)
+
+    const value = {navigate,token,balance,incomes, expenses,visible,setVisible,backendUrl}
+
+    const getIncomeData = () => {
+        
+         
+    }
 
     useEffect( ()=> {
 
-        const storedToken = localStorage.getItem('token');
+    
 
-        if(!token && storedToken)
-        {
-            setToken(storedToken);
-        }
-
-    },[token])
+    },[])
 
     return (
         <UserContext.Provider value = {value}>

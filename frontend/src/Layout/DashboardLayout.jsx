@@ -9,9 +9,7 @@ import Header from "../components/Header";
 
 export default function DashboardLayout() {
 
-  const {navigate,token} = useContext(UserContext)
-
-  const [visible, setVisible] = useState(false)
+  const {visible ,setVisible}  = useContext(UserContext)
 
   return (
 
@@ -19,7 +17,7 @@ export default function DashboardLayout() {
    <div className="flex flex-col min-h-screen bg-gray-300">
 
       {/* Header */}
-      <Header visible = {visible} setVisible = {setVisible}/>
+      <Header/>
 
       
       {visible && (
@@ -30,16 +28,14 @@ export default function DashboardLayout() {
 
       <div className="flex pt-15 md:w-full">
 
-          { token 
-             &&
+         
             <div className={`hidden  md:block fixed top-12 left-0  h-screen w-64 `}>
                 <Sidebar />
-              </div>
-          }
-          
-          <main className={`flex-1 p-6  ${token ? "sm:ml-64  bg-gray-800" : " bg-gray-950" } `}>
-            <Outlet />
-          </main>
+            </div>
+        
+            <main className="flex-1 p-6  sm:ml-64  bg-gray-800" >
+              <Outlet />
+            </main>
       
       </div>
 

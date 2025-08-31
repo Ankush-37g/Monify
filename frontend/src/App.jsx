@@ -7,9 +7,9 @@ import Income from './pages/Income.jsx';
 import Expense from './pages/Expense.jsx';
 import Budget from './pages/Budget.jsx';
 import Report from './pages/Report.jsx'
-import Home from './pages/Home.jsx'
 import UserContextProvider from './context/UserContext.jsx';
-
+import LandingPage from './pages/LandingPage.jsx';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 
 const App = () => {
 
@@ -21,11 +21,10 @@ const App = () => {
         
            <Routes>
 
-              <Route path="/" element = {<Root />}/>
+              <Route path="/" element={<LandingPage />} />
               <Route path="/login" element = {<Login />}/>
 
               <Route element={<DashboardLayout/>}>
-                 <Route path="/Home" element={<Home />} />
                  <Route path="/dashboard" element={<Dashboard />} />
                  <Route path="/Income" element={<Income />} />
                  <Route path="/Expense" element={<Expense />} />
@@ -42,12 +41,5 @@ const App = () => {
   )
 }
 
-const Root = () => {
-
-   const storedToken = localStorage.getItem('token')
-
-   return storedToken ? <Navigate to="/dashboard" /> : <Navigate to="/Home" />;
-
-}
 
 export default App

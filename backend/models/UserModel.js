@@ -6,7 +6,9 @@ const userSchema = new Schema(
     {
         name: {type : String, required: true},
         email: {type: String, required: true, unique: true},
-        password: {type: String, required: true},
+        password: {type: String},
+        googleId: { type: String, unique: true, sparse: true },
+        authProvider: { type: String, enum: ["local", "google"], default: "local" },
         profilePhoto: {type: String},
         refreshToken: {type: String}
     }

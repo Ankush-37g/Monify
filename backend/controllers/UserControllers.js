@@ -4,6 +4,10 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { User } from "../models/UserModel.js";
 import validator from "validator"
 import {uploadOnCloudinary} from '../utils/cloudinary.js'
+import bcrypt from "bcrypt"
+import { OAuth2Client } from "google-auth-library";
+
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 const generateAccessAndRefreshTokens = async(userId)=> {
     
@@ -11,9 +15,9 @@ const generateAccessAndRefreshTokens = async(userId)=> {
          
           const user = await User.findById(userId)
           
-          const accessToken = user.generateAccessToken
+          const accessToken = user.generateAccessToken()
 
-          const refreshToken = user.generateRefreshToken
+          const refreshToken = user.generateRefreshToken()
 
           user.refreshToken = refreshToken
 
@@ -27,6 +31,61 @@ const generateAccessAndRefreshTokens = async(userId)=> {
       }
 }
 
+const googleAuth = asyncHandler(async (req, res) => {
+
+  const { token } = req.body; // frontend sends access_token from Google
+
+  if (!token) {
+    throw new ApiError(400, "Google token missing");
+  }
+
+  // ✅ Verify token with Google
+  const ticket = await client.verifyIdToken({
+    idToken: token,
+    audience: process.env.GOOGLE_CLIENT_ID,
+  });
+
+  const payload = ticket.getPayload();
+  const { sub,email, name, picture } = payload;
+
+  // ✅ Check if user already exists
+  let user = await User.findOne({ email });
+
+  if (!user) {
+    // New user → Create in DB
+    user = await User.create({
+      name,
+      email,
+      googleId: sub, 
+      authProvider: "google",
+      profilePhoto: picture,
+       
+    });
+  }
+
+  const { accessToken, refreshToken } = await generateAccessAndRefreshTokens(
+    user._id
+  );
+
+  const options = {
+    httpOnly: true,
+    secure: true, 
+  };
+
+  return res
+    .status(200)
+    .cookie("accessToken", accessToken, options)
+    .cookie("refreshToken", refreshToken, options)
+    .json(
+      new ApiResponse(
+        200,
+        { user: await User.findById(user._id).select("-password -refreshToken") },
+        "Google Auth successful"
+      )
+    );
+});
+
+
 const signUp = asyncHandler( async(req,res) => {
      
       const {name,email,password} = req.body;
@@ -36,7 +95,7 @@ const signUp = asyncHandler( async(req,res) => {
         throw new ApiError(400,"All fields are required");
       }
 
-      const existedUser =  User.findOne({email})
+      const existedUser = await User.findOne({email})
 
       if(existedUser)
       {
@@ -55,12 +114,14 @@ const signUp = asyncHandler( async(req,res) => {
 
       const profilePhotoLocalPath = req.files?.profilePhoto?.[0]?.path
 
-      const profilePhoto = ""
+      let profilePhoto = ""
 
       if(profilePhotoLocalPath)
       {
           profilePhoto = await uploadOnCloudinary(profilePhotoLocalPath)
       }
+
+
 
       const user = await User.create({
             name,
@@ -92,7 +153,7 @@ const loginUser = asyncHandler( async (req,res) => {
            throw new ApiError(400,"Email is required")
       }
 
-      const user = await User.findOne(email)
+      const user = await User.findOne({email})
             
       if(!user)
       {
@@ -190,9 +251,14 @@ const refreshAccessToken = asyncHandler( async (req,res)=> {
 
 const resetPassword = asyncHandler( async(req,res) => {
 
-      const { newPassword, confirmNewPassword } = req.body
+      const { email, newPassword, confirmNewPassword } = req.body
 
-      const user = User.findById(req.user._id)
+      const user = await User.findOne({email})
+
+      if(!user)
+      {
+            throw new ApiError(400,"Email Id does not")
+      }
 
       const match = bcrypt.compare(newPassword,confirmNewPassword)
 
@@ -211,4 +277,4 @@ const resetPassword = asyncHandler( async(req,res) => {
 
 })
 
-export {signUp,loginUser,refreshAccessToken,resetPassword}
+export {signUp,loginUser,refreshAccessToken,resetPassword,googleAuth}

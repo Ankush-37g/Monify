@@ -1,15 +1,24 @@
 import {Router} from "express"
 import { upload } from "../middleware/MulterMiddleware.js"
-import { signUp,loginUser,refreshAccessToken } from "../controllers/UserControllers.js"
-const router = Router()
+import { signUp,loginUser,refreshAccessToken, resetPassword, googleAuth } from "../controllers/UserControllers.js"
 
-router.post(
+
+const userRouter = Router()
+
+userRouter.post(
     '/signup',
 
     upload.fields([{name:"profilePhoto", maxCount: 1}]),
 
     signUp)
      
-router.post('/login',loginUser)
-router.post('/refresh-token',refreshAccessToken)
+userRouter.post('/login',loginUser)
+
+userRouter.post('/resetPassword',resetPassword)
+
+userRouter.post('/refresh-token',refreshAccessToken)
+
+userRouter.post('/google', googleAuth)
+
+export {userRouter}
 
