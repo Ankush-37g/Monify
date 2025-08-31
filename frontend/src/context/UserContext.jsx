@@ -24,7 +24,7 @@ const UserContextProvider = ({children}) => {
 
     const getIncomeData = () => {
         
-         
+          
     }
 
     useEffect( ()=> {
