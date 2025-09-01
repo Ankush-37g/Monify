@@ -1,8 +1,8 @@
 import { User } from '../models/UserModel.js';
 import { ApiError } from '../utils/ApiError.js'
-import asyncHandler from '../utils/asyncHandler.js'
-import { Income } from '../models/IncomeModel';
-import { ApiResponse } from '../utils/ApiResponse';
+import {asyncHandler} from '../utils/asyncHandler.js'
+import { Income } from '../models/IncomeModel.js';
+import { ApiResponse } from '../utils/ApiResponse.js';
 
 const addIncome = asyncHandler( async(req, res)=> {
 
