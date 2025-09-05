@@ -6,8 +6,17 @@ import validator from "validator"
 import {uploadOnCloudinary} from '../utils/cloudinary.js'
 import bcrypt from "bcrypt"
 import { OAuth2Client } from "google-auth-library";
+import jwt from "jsonwebtoken"
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+
+const cookieOptions = {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production", // only true in prod (HTTPS)
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", 
+      path: "/", // ensures cookie is sent for all routes
+      maxAge: 7 * 24 * 60 * 60 * 1000, //7 days in milliseconds
+};
 
 const generateAccessAndRefreshTokens = async(userId)=> {
     
@@ -27,62 +36,61 @@ const generateAccessAndRefreshTokens = async(userId)=> {
 
       } catch (error) {
             
-            throw new ApiError(500,"Something went wrong while generating access and refresh token")
+          throw new ApiError(500,"Something went wrong while generating access and refresh token")
       }
 }
 
 const googleAuth = asyncHandler(async (req, res) => {
 
-  const { token } = req.body; // frontend sends access_token from Google
+      const { token } = req.body; // frontend sends access_token from Google
 
-  if (!token) {
-    throw new ApiError(400, "Google token missing");
-  }
+      if (!token) {
 
-  // ✅ Verify token with Google
-  const ticket = await client.verifyIdToken({
-    idToken: token,
-    audience: process.env.GOOGLE_CLIENT_ID,
-  });
+         throw new ApiError(400, "Google token missing");
+      }
 
-  const payload = ticket.getPayload();
-  const { sub,email, name, picture } = payload;
+      // Verify token with Google
+      const ticket = await client.verifyIdToken({
+            idToken: token,
+            audience: process.env.GOOGLE_CLIENT_ID,
+      });
 
-  // ✅ Check if user already exists
-  let user = await User.findOne({ email });
+      const payload = ticket.getPayload();
+      const { sub,email, name, picture } = payload;
 
-  if (!user) {
-    // New user → Create in DB
-    user = await User.create({
-      name,
-      email,
-      googleId: sub, 
-      authProvider: "google",
-      profilePhoto: picture,
-       
-    });
-  }
+      // Check if user already exists
+      let user = await User.findOne({ email });
 
-  const { accessToken, refreshToken } = await generateAccessAndRefreshTokens(
-    user._id
-  );
+      if (!user) {
+      // New user → Create in DB
+      user = await User.create({
+            name,
+            email,
+            googleId: sub, 
+            authProvider: "google",
+            profilePhoto: picture,
+            
+      });
+      }
 
-  const options = {
-    httpOnly: true,
-    secure: true, 
-  };
+      const { accessToken, refreshToken } = await generateAccessAndRefreshTokens( user._id );
 
-  return res
-    .status(200)
-    .cookie("accessToken", accessToken, options)
-    .cookie("refreshToken", refreshToken, options)
-    .json(
-      new ApiResponse(
-        200,
-        { user: await User.findById(user._id).select("-password -refreshToken") },
-        "Google Auth successful"
-      )
-    );
+      // const options = {
+      // httpOnly: true,
+      // secure: process.env.NODE_ENV === "production", 
+      // };
+
+      return res
+      .status(200)
+      .cookie("accessToken", accessToken, cookieOptions)
+      .cookie("refreshToken", refreshToken, cookieOptions)
+      .json(
+            new ApiResponse(
+            200,
+            { user: await User.findById(user._id).select("-password -refreshToken") },
+            "Google Auth successful"
+            )
+      );
 });
 
 
@@ -130,7 +138,7 @@ const signUp = asyncHandler( async(req,res) => {
             profilePhoto : profilePhoto?.url || ""
       })
 
-      const createdUser = await User.findById(user._id);
+      const createdUser = await User.findById(user._id).select(-password);
 
       if(!createdUser)
       {
@@ -139,7 +147,7 @@ const signUp = asyncHandler( async(req,res) => {
 
       return res.status(201).json(
 
-            new ApiResponse(200,createdUser,"User signUp Successfully")
+            new ApiResponse(200,{user: createdUser},"User signUp Successfully")
       )
 })
 
@@ -171,15 +179,11 @@ const loginUser = asyncHandler( async (req,res) => {
 
       const loggedInUser = await User.findById(user._id).select("-password -refreshToken")
 
-      const options = {
-            httpOnly: true,
-            secure: true,
-      }
 
       return res
       .status(200)
-      .cookie("accessToken",accessToken,options)
-      .cookie("refreshToken",refreshToken,options)
+      .cookie("accessToken",accessToken,cookieOptions)
+      .cookie("refreshToken",refreshToken,cookieOptions)
       .json(
             new ApiResponse(
                   200,
@@ -193,62 +197,63 @@ const loginUser = asyncHandler( async (req,res) => {
 
 })
 
-const refreshAccessToken = asyncHandler( async (req,res)=> {
-
-      const storedRefreshToken = req.cookies.refreshToken
+const logoutUser = asyncHandler( async (req, res) => {
       
-      if(!storedRefreshToken)
-      {
-            throw new ApiError(400,"Unauthorized access")
+      await User.findByIdAndUpdate(
+
+            req.user._id,
+            {
+                  $set: { refreshToken: undefined}
+            },
+            {
+                  new: true
+            }
+      )
+
+      return res
+      .status(200)
+      .clearCookie("accessToken",cookieOptions)
+      .clearCookie("refreshToken",cookieOptions)
+      .json(new ApiResponse(200,{},"User logged Out"))
+})
+
+const refreshAccessToken = asyncHandler(async (req, res) => {
+
+      const storedRefreshToken = req.cookies.refreshToken;
+
+      if (!storedRefreshToken) {
+      throw new ApiError(400, "Unauthorized access");
       }
 
       try {
-          
-            const decodedToken = jwt.verify(
+      const decodedToken = jwt.verify(
+            storedRefreshToken,
+            process.env.REFRESH_TOKEN_SECRET
+      );
 
-                  storedRefreshToken,
-                  process.env.REFRESH_TOKEN_SECRET
-            )
+      const user = await User.findById(decodedToken._id);
 
-            const user = await User.findById(decodedToken._id)
+      if (!user) {
+            throw new ApiError(401, "Invalid refresh token");
+      }
 
-            if(!user)
-            {
-                throw new ApiError(401,"Invalid refresh token")
-            }
+      if (storedRefreshToken !== user.refreshToken) {
+            throw new ApiError(401, "RefreshToken mismatch");
+      }
 
-            if(storedRefreshToken != user.refreshToken)
-            {
-                throw new ApiError(401,"RefreshToken mismatch")
-            }
+      
+      const accessToken = user.generateAccessToken(user._id);
 
-            const options = {
-
-                  httpOnly : true,
-                  secure: true
-            }
-
-            const {accessToken, refreshToken} = await generateAccessAndRefreshTokens(user._id)
-
-            return res
+      return res
             .status(200)
-            .cookie("accessToken",accessToken,options)
-            .cookie("refreshToken",refreshToken,options)
-            .json(
-                  new ApiResponse(
-                        200,
-                        null,
-                        "Access Token refreshed"
-                  )
-            )
-
+            .cookie("accessToken", accessToken, cookieOptions)
+            .json(new ApiResponse(200, null, "Access Token refreshed"));
 
       } catch (error) {
-            
-            throw new ApiError(401, error?.message || "Invalid refresh token")
+
+           throw new ApiError(401, error?.message || "Invalid refresh token");
       }
-  
-})
+});
 
 const resetPassword = asyncHandler( async(req,res) => {
 
@@ -278,4 +283,4 @@ const resetPassword = asyncHandler( async(req,res) => {
 
 })
 
-export {signUp,loginUser,refreshAccessToken,resetPassword,googleAuth}
+export {signUp,loginUser,refreshAccessToken,resetPassword,googleAuth,logoutUser}

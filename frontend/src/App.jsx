@@ -9,7 +9,7 @@ import Budget from './pages/Budget.jsx';
 import Report from './pages/Report.jsx'
 import UserContextProvider from './context/UserContext.jsx';
 import LandingPage from './pages/LandingPage.jsx';
-import { GoogleOAuthProvider } from '@react-oauth/google';
+import { ToastContainer } from "react-toastify";
 
 const App = () => {
 
@@ -34,6 +34,8 @@ const App = () => {
           
 
            </Routes>
+
+           <ToastContainer position="top-right" autoClose={3000} />
         
      </div>
 

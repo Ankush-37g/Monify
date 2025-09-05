@@ -1,4 +1,4 @@
- import mongoose ,{Schema} from mongoose
+ import mongoose ,{Schema} from "mongoose"
 
  const expenseSchema = new Schema(
     {
@@ -12,5 +12,5 @@
     }
 )
 
-export const Expense = mongoose.models("Expense") || mongoose.model("Expense",expenseSchema)
+export const Expense = mongoose.models.Expense || mongoose.model("Expense",expenseSchema)
 

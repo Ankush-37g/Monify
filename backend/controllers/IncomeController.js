@@ -16,7 +16,7 @@ const addIncome = asyncHandler( async(req, res)=> {
     
     if(!incomeSource || !amount || !date)
     {
-      throw new ApiError("400", "All fields are required");
+      throw new ApiError(400, "All fields are required");
     }
     
     const income = await Income.create({
@@ -49,7 +49,7 @@ const deleteIncome = asyncHandler( async(req, res)=> {
 
 const listIncomes = asyncHandler( async (req, res) =>{
  
-    const incomes = await Income.find({}); 
+    const incomes = await Income.find({ user: req.user._id }).sort({ date: -1 }); 
 
     return res
     .status(200)

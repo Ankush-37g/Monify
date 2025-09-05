@@ -8,38 +8,38 @@ import { assets } from "../assets/assets";
 import { RxCross2 } from "react-icons/rx";
 import { useState } from "react";
 import { RiDeleteBin6Line } from "react-icons/ri";
+import { useContext } from "react";
+import { UserContext } from "../context/UserContext.jsx";
+import { toast } from "react-toastify";
+import api from "../utils/Api.js";
 
 const Expense = () => {
 
+  const {expenses,setExpenses} = useContext(UserContext)
+
   const [isOpen, setIsOpen] = useState(false)
 
-  const [incomeSource, setIncomeSource] = useState("")
+  const [expenseCategory, setExpenseCategory] = useState("")
 
   const [amount, setAmount] = useState("")
 
   const [date, setDate] = useState("")
 
+  
+  
+
   const data = {
-        labels: [
-          "2nd Jan",
-          "3rd Jan",
-          "4th Jan",
-          "5th Jan",
-          "6th Jan",
-          "7th Jan",
-          "8th Jan",
-          "9th Jan",
-          "10th Jan",
-          "11th Jan",
-          "12th Jan",
-          "14th Jan",
-          "11th Feb",
-          "17th Feb",
-        ],
+        labels: expenses.map((expense) =>
+
+                new Date(expense.date).toLocaleDateString("en-GB",{
+                      day: "2-digit",
+                      month: "short",
+                })),
+
         datasets: [
         {
           label: "Expense",
-          data: [500, 200, 150, 250, 100, 550, 450, 700, 800, 850, 600, 300, 550, 400],
+          data: expenses.map((expense)=> expense.amount),
           fill: true,
           borderColor: "#27c8a2", // teal
           backgroundColor: (context) => {
@@ -63,25 +63,93 @@ const Expense = () => {
       ],
 
 
-        };
+  };
 
-        const options = {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: { display: false },
-            
-          },
-          scales: {
-            x: {
-              grid: { display: false },
-            },
-            y: {
-              grid: { borderDash: [0] },
-              beginAtZero: true,
-            },
-          },
-        };
+  const options = {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        
+      },
+      scales: {
+        x: {
+          grid: { display: false },
+        },
+        y: {
+          grid: { borderDash: [0] },
+          ticks: {
+          stepSize: 500, 
+         
+         },
+          beginAtZero: true,
+        },
+      },
+  };
+
+  const onSubmitHandler = async(e) => {
+
+        e.preventDefault()
+
+       try {
+         
+          const response = await api.post('/expense/add', {expenseCategory,amount,date});
+
+          console.log(response.data)
+
+          if(response.data.success)
+          {
+              toast.success(response.data.message)
+
+              setExpenses((prev) => [...prev,response.data.data])
+              
+          }
+       } catch (error) {
+        
+           if (error.response && error.response.data) {
+
+            toast.error(error.response.data.message || "Something went wrong!");
+            console.log(error.response.data);
+           } else
+           {
+            toast.error(error.message || "Network Error");
+            console.log(error.message);
+           }
+       }
+      
+       
+      
+  }
+  const handleDeleteExpense = async(id) => {
+        
+    try {
+
+      const response = await api.post('/expense/delete',{id})
+
+      console.log(response.data)
+
+      if(response.data.success)
+      {
+         toast.success("Expense deleted successfully")
+
+         setExpenses(prev => prev.filter(expense => expense._id !== id))
+      }
+
+
+    } catch (error) {
+         if (error.response && error.response.data) {
+
+            toast.error(error.response.data.message || "Something went wrong!");
+            console.log(error.response.data);
+         } else
+         {
+            toast.error(error.message || "Network Error");
+            console.log(error.message);
+         }
+    }
+  }  
+
+      
 
 
   return (
@@ -98,7 +166,7 @@ const Expense = () => {
 
                   </div>
                   
-                   <div onClick={()=>setIsOpen(true)} className="flex items-center gap-1 px-4 rounded-xl h-10 bg-green-300 cursor-pointer ">
+                   <div onClick={()=>setIsOpen(true)} className="flex items-center gap-1 md:px-4 px-2 py-3 rounded-xl h-10 bg-gray-200 text-black cursor-pointer ">
 
                       <IoAdd className="w-5 h-5 font-bold"/>
                       <p className="font-bold">Add Expense</p>
@@ -126,329 +194,54 @@ const Expense = () => {
               </div>
 
               <div className='grid grid-cols-1 sm:grid-cols-2 mt-6 gap-3'>
+                     
+                     {
+                      expenses.map((expense,index)=>(
+                          
+                          <div key={index} className='flex justify-between items-center p-2 rounded group hover:bg-gray-700'>
 
-                    <div className='flex justify-between items-center p-2 rounded group hover:bg-gray-700'>
+                              <div className='flex gap-3 items-center'>
 
-                          <div className='flex gap-3 items-center'>
+                                  <img className='w-7 rounded-full overflow-hidden object-cover bg-gray-100' src={assets.logo2} alt="" />
 
-                              <img className='w-7 rounded-full overflow-hidden object-cover bg-gray-100' src={assets.logo2} alt="" />
+                                  <div className='flex flex-col'>
 
-                              <div className='flex flex-col'>
+                                    <p className='font-semibold'>{expense.expenseCategory}</p>
 
-                                <p className='font-semibold'>Shopping</p>
-                                <p className='font-light'>15th Aug 2025</p>
-                                
+                                    <p className='font-light'>
+                                      {new Date(expense.date).toLocaleDateString("en-GB", {
+                                        day: "2-digit",
+                                        month: "short",
+                                        year: "numeric"
+                                      })}
+                                    </p>
+                                    
+                                  </div>
+
                               </div>
 
-                          </div>
+                              <div className="flex items-center gap-8">
 
-                          <div className="flex items-center gap-8">
+                                <RiDeleteBin6Line onClick={()=>handleDeleteExpense(expense._id)} className="hidden group-hover:block w-5 h-5 cursor-pointer "/>
 
-                            <RiDeleteBin6Line className="hidden group-hover:block w-5 h-5 cursor-pointer "/>
-
-                            <div className='px-2 py-0.5 bg-red-400 flex items-center gap-2 rounded-xl'>
-
-                              <p>+$10000</p>
-                              <FaArrowTrendDown className='w-3 h-3'/>
-
-                            </div>
-                          </div>
-                            
-                          
+                                <div className='px-3 py-1 bg-red-400 flex items-center gap-2 rounded-xl'>
+                                
+                                    <p>+${expense.amount}</p>
+                                    <FaArrowTrendDown className='w-3 h-3' />
+                                
+                                 </div>
+                              </div>
+                                
+                              
 
 
-                    </div>
+                           </div>
+                      ))
+                     }
 
                     
-                    <div className='flex justify-between items-center p-2 rounded group hover:bg-gray-700'>
 
-                          <div className='flex gap-3 items-center'>
-
-                              <img className='w-7 rounded-full overflow-hidden object-cover bg-gray-100' src={assets.logo2} alt="" />
-
-                              <div className='flex flex-col'>
-
-                                <p className='font-semibold'>Shopping</p>
-                                <p className='font-light'>15th Aug 2025</p>
-                                
-                              </div>
-
-                          </div>
-
-                          <div className="flex items-center gap-8">
-
-                            <RiDeleteBin6Line className="hidden group-hover:block w-5 h-5 cursor-pointer "/>
-
-                            <div className='px-2 py-0.5 bg-red-400 flex items-center gap-2 rounded-xl'>
-
-                              <p>+$10000</p>
-                              <FaArrowTrendDown className='w-3 h-3'/>
-
-                            </div>
-                          </div>
-                            
-                          
-
-
-                    </div>
-
-                    <div className='flex justify-between items-center p-2 rounded group hover:bg-gray-700'>
-
-                          <div className='flex gap-3 items-center'>
-
-                              <img className='w-7 rounded-full overflow-hidden object-cover bg-gray-100' src={assets.logo2} alt="" />
-
-                              <div className='flex flex-col'>
-
-                                <p className='font-semibold'>Shopping</p>
-                                <p className='font-light'>15th Aug 2025</p>
-                                
-                              </div>
-
-                          </div>
-
-                          <div className="flex items-center gap-8">
-
-                            <RiDeleteBin6Line className="hidden group-hover:block w-5 h-5 cursor-pointer "/>
-
-                            <div className='px-2 py-0.5 bg-red-400 flex items-center gap-2 rounded-xl'>
-
-                              <p>+$10000</p>
-                              <FaArrowTrendDown className='w-3 h-3'/>
-
-                            </div>
-                          </div>
-                            
-                          
-
-
-                    </div>
-
-                    <div className='flex justify-between items-center p-2 rounded group hover:bg-gray-700'>
-
-                          <div className='flex gap-3 items-center'>
-
-                              <img className='w-7 rounded-full overflow-hidden object-cover bg-gray-100' src={assets.logo2} alt="" />
-
-                              <div className='flex flex-col'>
-
-                                <p className='font-semibold'>Shopping</p>
-                                <p className='font-light'>15th Aug 2025</p>
-                                
-                              </div>
-
-                          </div>
-
-                          <div className="flex items-center gap-8">
-
-                            <RiDeleteBin6Line className="hidden group-hover:block w-5 h-5 cursor-pointer "/>
-
-                            <div className='px-2 py-0.5 bg-red-400 flex items-center gap-2 rounded-xl'>
-
-                              <p>+$10000</p>
-                              <FaArrowTrendDown className='w-3 h-3'/>
-
-                            </div>
-                          </div>
-                            
-                          
-
-
-                    </div>
-
-                    <div className='flex justify-between items-center p-2 rounded group hover:bg-gray-700'>
-
-                          <div className='flex gap-3 items-center'>
-
-                              <img className='w-7 rounded-full overflow-hidden object-cover bg-gray-100' src={assets.logo2} alt="" />
-
-                              <div className='flex flex-col'>
-
-                                <p className='font-semibold'>Shopping</p>
-                                <p className='font-light'>15th Aug 2025</p>
-                                
-                              </div>
-
-                          </div>
-
-                          <div className="flex items-center gap-8">
-
-                            <RiDeleteBin6Line className="hidden group-hover:block w-5 h-5 cursor-pointer "/>
-
-                            <div className='px-2 py-0.5 bg-red-400 flex items-center gap-2 rounded-xl'>
-
-                              <p>+$10000</p>
-                              <FaArrowTrendDown className='w-3 h-3'/>
-
-                            </div>
-                          </div>
-                            
-                          
-
-
-                    </div>
-
-                    
-                    <div className='flex justify-between items-center p-2 rounded group hover:bg-gray-700'>
-
-                          <div className='flex gap-3 items-center'>
-
-                              <img className='w-7 rounded-full overflow-hidden object-cover bg-gray-100' src={assets.logo2} alt="" />
-
-                              <div className='flex flex-col'>
-
-                                <p className='font-semibold'>Shopping</p>
-                                <p className='font-light'>15th Aug 2025</p>
-                                
-                              </div>
-
-                          </div>
-
-                          <div className="flex items-center gap-8">
-
-                            <RiDeleteBin6Line className="hidden group-hover:block w-5 h-5 cursor-pointer "/>
-
-                            <div className='px-2 py-0.5 bg-red-400 flex items-center gap-2 rounded-xl'>
-
-                              <p>+$10000</p>
-                              <FaArrowTrendDown className='w-3 h-3'/>
-
-                            </div>
-                          </div>
-                            
-                          
-
-
-                    </div>
-
-                    <div className='flex justify-between items-center p-2 rounded group hover:bg-gray-700'>
-
-                          <div className='flex gap-3 items-center'>
-
-                              <img className='w-7 rounded-full overflow-hidden object-cover bg-gray-100' src={assets.logo2} alt="" />
-
-                              <div className='flex flex-col'>
-
-                                <p className='font-semibold'>Shopping</p>
-                                <p className='font-light'>15th Aug 2025</p>
-                                
-                              </div>
-
-                          </div>
-
-                          <div className="flex items-center gap-8">
-
-                            <RiDeleteBin6Line className="hidden group-hover:block w-5 h-5 cursor-pointer "/>
-
-                            <div className='px-2 py-0.5 bg-red-400 flex items-center gap-2 rounded-xl'>
-
-                              <p>+$10000</p>
-                              <FaArrowTrendDown className='w-3 h-3'/>
-
-                            </div>
-                          </div>
-                            
-                          
-
-
-                    </div>
-
-                    <div className='flex justify-between items-center p-2 rounded group hover:bg-gray-700'>
-
-                          <div className='flex gap-3 items-center'>
-
-                              <img className='w-7 rounded-full overflow-hidden object-cover bg-gray-100' src={assets.logo2} alt="" />
-
-                              <div className='flex flex-col'>
-
-                                <p className='font-semibold'>Shopping</p>
-                                <p className='font-light'>15th Aug 2025</p>
-                                
-                              </div>
-
-                          </div>
-
-                          <div className="flex items-center gap-8">
-
-                            <RiDeleteBin6Line className="hidden group-hover:block w-5 h-5 cursor-pointer "/>
-
-                            <div className='px-2 py-0.5 bg-red-400 flex items-center gap-2 rounded-xl'>
-
-                              <p>+$10000</p>
-                              <FaArrowTrendDown className='w-3 h-3'/>
-
-                            </div>
-                          </div>
-                            
-                          
-
-
-                    </div>
-
-                    <div className='flex justify-between items-center p-2 rounded group hover:bg-gray-700'>
-
-                          <div className='flex gap-3 items-center'>
-
-                              <img className='w-7 rounded-full overflow-hidden object-cover bg-gray-100' src={assets.logo2} alt="" />
-
-                              <div className='flex flex-col'>
-
-                                <p className='font-semibold'>Shopping</p>
-                                <p className='font-light'>15th Aug 2025</p>
-                                
-                              </div>
-
-                          </div>
-
-                          <div className="flex items-center gap-8">
-
-                            <RiDeleteBin6Line className="hidden group-hover:block w-5 h-5 cursor-pointer "/>
-
-                            <div className='px-2 py-0.5 bg-red-400 flex items-center gap-2 rounded-xl'>
-
-                              <p>+$10000</p>
-                              <FaArrowTrendDown className='w-3 h-3'/>
-
-                            </div>
-                          </div>
-                            
-                          
-
-
-                    </div>
-
-                    <div className='flex justify-between items-center p-2 rounded group hover:bg-gray-700'>
-
-                          <div className='flex gap-3 items-center'>
-
-                              <img className='w-7 rounded-full overflow-hidden object-cover bg-gray-100' src={assets.logo2} alt="" />
-
-                              <div className='flex flex-col'>
-
-                                <p className='font-semibold'>Shopping</p>
-                                <p className='font-light'>15th Aug 2025</p>
-                                
-                              </div>
-
-                          </div>
-
-                          <div className="flex items-center gap-8">
-
-                            <RiDeleteBin6Line className="hidden group-hover:block w-5 h-5 cursor-pointer "/>
-
-                            <div className='px-2 py-0.5 bg-red-400 flex items-center gap-2 rounded-xl'>
-
-                              <p>+$10000</p>
-                              <FaArrowTrendDown className='w-3 h-3'/>
-
-                            </div>
-                          </div>
-                            
-                          
-
-
-                    </div>
-
+                  
               </div>
 
                 
@@ -461,7 +254,7 @@ const Expense = () => {
                 }`}>
 
             <div
-              className={`bg-gray-950 rounded-xl p-5 shadow-lg shadow-gray-700 text-white transform transition-transform duration-300 ${
+              className={`bg-gray-200 rounded-xl p-5 shadow-lg shadow-gray-700 text-black transform transition-transform duration-300 ${
                 isOpen ? "scale-100" : "scale-90"
               }`}
             >
@@ -478,18 +271,18 @@ const Expense = () => {
 
               <hr className="font-extralight mb-8"/>
 
-              <form action="">
+              <form onSubmit={onSubmitHandler}>
 
 
                  <div className="flex flex-col gap-1 mb-3 ">
                    <p>Category</p>
                    <input
                       type="text"
-                      id="IncomeSource"
-                      value={incomeSource}
-                      onChange={(e) => setIncomeSource(e.target.value)}
+                      id="expenseCategory"
+                      value={expenseCategory}
+                      onChange={(e) => setExpenseCategory(e.target.value)}
                       placeholder="Loan Repayment, Rent ..."
-                      className="w-xl border bg-white/20  border-black px-3 py-3 rounded focus:border-2 "
+                     className="w-xl border bg-white/20  border-black px-3 py-3 rounded focus:border-2 "
                      
                     />
                  </div>
@@ -520,6 +313,13 @@ const Expense = () => {
                       
                      />
                   </div>
+
+                  <button 
+                    type="submit" 
+                    className="w-full bg-black text-white py-2 px-4 rounded mt-4 hover:bg-gray-800 cursor-pointer"
+                  >
+                    Add Expense
+                  </button>
                     
               </form>
 

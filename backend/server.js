@@ -37,11 +37,19 @@ app.use(express.static("public"))
 
 app.use(cookieParser())
 
+
+
 import { userRouter } from "./routes/UserRoutes.js"
 import { incomeRouter } from "./routes/IncomeRoutes.js"
+import { errorHandler } from "./middleware/ErrorHandler.js"
+import { expenseRouter } from "./routes/ExpenseRoutes.js"
 
 app.use('/api/user',userRouter)
 app.use('/api/income',incomeRouter)
+app.use('/api/expense',expenseRouter)
+
+
+app.use(errorHandler)
 
 
 

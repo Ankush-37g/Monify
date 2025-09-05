@@ -10,17 +10,61 @@ import { assets } from '../assets/assets';
 
 const Dashboard = () => {
 
-   const {navigate} = useContext(UserContext)
+   const {navigate,totalIncome,totalExpense,balance,expenses,incomes} = useContext(UserContext)
 
-   const {balance, income, expense} = useContext(UserContext)
+   const today = new Date()
+   
+   const thirtyDaysAgo = new Date()
+   
+   const sixtyDaysAgo = new Date()
 
-   const data = {
+   thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
+
+   sixtyDaysAgo.setDate(sixtyDaysAgo.getDate() - 30)
+
+   const ThirtyDaysExpenses = expenses.filter((expense)=> new Date(expense.date) > thirtyDaysAgo)
+    
+   const SixtyDaysIncomes = incomes.filter((income)=> new Date(income.date) > sixtyDaysAgo)
+
+
+   const FourExpenses = expenses.slice(-4).reverse()
+
+   const FourIncomes = incomes.slice(-4).reverse()
+
+   const transactions = [
+
+      ...incomes.map(income => ({
+                id: income._id,
+                title: income.incomeSource,
+                date: income.date,
+                amount: income.amount,
+                type: "income",
+      })),
+
+      ...expenses.map(expense => ({
+                id: expense._id,
+                title: expense.expenseCategory,
+                date: expense.date,
+                amount: expense.amount,
+                type: "expense",
+      }))
+
+   ];
+
+  // Sort by date (latest first)
+   const sortedTransactions = transactions.sort(
+    (a, b) => new Date(b.date) - new Date(a.date)
+   );
+   
+   const recentTransactions = sortedTransactions.slice(0, 4);
+
+   const OverviewDoughnutData = {
       labels: ["Balance", "Income", "Expense"],
 
       datasets: [
         {
           label: "",
-          data: [150, 100, 50], // Values for each slice
+          data: [balance, totalIncome, totalExpense], // Values for each slice
           backgroundColor: [
              "rgba(20, 184, 166, 1)", // Teal
              "rgba(59, 130, 246, 1)", // Blue
@@ -33,6 +77,99 @@ const Dashboard = () => {
         },
       ],
     };
+    const OverviewDoughnutOptions={
+        responsive: true,
+        maintainAspectRatio: false, // chart fills container
+        cutout: '70%', 
+        plugins: {
+          legend: {
+            position: 'bottom', 
+            labels: {
+              boxWidth: 20, 
+              padding: 15, 
+          },
+        },
+      },
+    }
+    
+    const ExpenseBarData = {
+      
+      labels: ThirtyDaysExpenses.map((expense) =>
+
+              new Date(expense.date).toLocaleDateString("en-GB",{
+                    day: "2-digit",
+                    month: "short",
+              })),
+
+      datasets: [
+        {
+          label: "Expenses",
+          data: ThirtyDaysExpenses.map((expense)=> expense.amount), 
+          backgroundColor: "rgba(139,92,246,0.7)", // purple shade
+          borderRadius: 8, // rounded corners
+        },
+      ],
+                   
+    }
+
+    const ExpenseBarOptions = {
+      
+      responsive: true,
+      maintainAspectRatio:false,
+      plugins: {
+        legend: { display: false }, 
+        title: { display: false },
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks: {
+            stepSize: 200,
+          },
+        },
+      },              
+    }
+
+    const IncomeDoughnutdata={
+          labels: SixtyDaysIncomes.map(income => income.incomeSource),
+          datasets: [
+            {
+              label: "",
+              data: SixtyDaysIncomes.map(income => income.amount), // Example values
+              backgroundColor: [
+                "rgba(139, 92, 246, 0.8)",  // Purple
+                "rgba(16, 185, 129, 0.8)",  // Green
+                "rgba(59, 130, 246, 0.8)",  // Blue
+                "rgba(249, 115, 22, 0.8)",  // Orange
+                "rgba(236, 72, 153, 0.8)",  // Pink
+              ],
+              borderWidth: 2,
+              borderColor: "#fff", // White separation between slices
+              hoverOffset: 10, // Slight pop effect on hover
+            },
+          ],
+  }
+
+  const IncomeDoughnutOptions={
+        responsive: true,
+        maintainAspectRatio: false,
+        cutout: "70%", // Donut thickness
+        plugins: {
+          legend: {
+            position: "bottom",
+            labels: {
+              boxWidth: 18,
+              padding: 12,
+              color: "gray", // dark gray text
+              font: {
+                size: 12,
+              },
+            },
+          },
+        },
+  }
+
+
 
    return (
 
@@ -53,7 +190,7 @@ const Dashboard = () => {
 
                </div>
              
-               <p className="mt-4 text-3xl font-extrabold text-teal-600">$4,000.00</p>
+               <p className="mt-4 text-3xl font-bold text-teal-600">${balance}</p>
 
             </div>
 
@@ -70,7 +207,7 @@ const Dashboard = () => {
 
               </div>
                
-              <p className="mt-4 text-3xl font-extrabold text-blue-500">$4,000.00</p>
+              <p className="mt-4 text-3xl font-bold text-blue-500">${totalIncome}</p>
             </div>
 
              {/* Expenses */}
@@ -86,7 +223,7 @@ const Dashboard = () => {
                    <FaArrowTrendDown className='w-7 h-7 text-red-500'/>
                    
                   </div>
-               <p className="mt-4 text-3xl font-extrabold text-red-500">$4,000.00</p>
+               <p className="mt-4 text-3xl font-bold text-red-500">${totalExpense}</p>
             </div>
 
         </div>
@@ -101,114 +238,59 @@ const Dashboard = () => {
 
                      <p className='text-3xl font-semibold'>Recent Transactions</p>
 
-                     <div className='bg-gray-700 flex gap-1.5 items-center justify-center px-2 py-1 rounded-xl transition duration-280 hover:scale-105 hover:shadow-xl cursor-pointer'>
-                          <p>See All</p>
-                          <IoArrowForward />
-
-                     </div>
                  </div>
 
-                 <div className='flex flex-col-reverse mt-6 gap-3 '>
+                 <div className='flex flex-col mt-6 gap-3 '>
 
-                    <div className='flex justify-between items-center p-3 '>
+                    {
+                      recentTransactions.map((transaction,index)=>(
 
-                      <div className='flex gap-3 items-center'>
+                           <div className='flex justify-between items-center p-3 '>
 
-                         <img className='w-7 rounded-full overflow-hidden object-cover ' src={assets.logo2} alt="" />
+                                <div className='flex gap-3 items-center'>
 
-                         <div className='flex flex-col'>
+                                  <img className='w-7 rounded-full overflow-hidden object-cover ' src={assets.logo2} alt="" />
 
-                           <p className='font-semibold'>Shopping</p>
-                           <p className='font-light'>15th Aug 2025</p>
-                           
-                         </div>
+                                  <div className='flex flex-col'>
 
-                      </div>
-                       
-                       <div className='px-3 py-1 bg-teal-600 flex items-center gap-2 rounded-xl'>
+                                    <p className='font-semibold'>{transaction.title}</p>
+                                    <p className='font-light'>
+                                      { new Date(transaction.date).toLocaleDateString("en-GB",{
+                                                              day: "2-digit",
+                                                              month: "short",
+                                      })}
+                                    </p>
+                                    
+                                  </div>
 
-                          <p>+$10000</p>
-                          <FaArrowTrendUp className='w-3 h-3' />
+                                </div>
+                                
+                               
 
-                       </div>
+                                {
+                                  transaction.type === "income" ?
+                                  <div className='px-3 py-1 bg-teal-600 flex items-center gap-2 rounded-xl'>
+                                    <p>+${transaction.amount}</p>
+                                    <FaArrowTrendUp className='w-3 h-3' />
+                                  </div>
+                                  :
+                                    <div className='px-3 py-1 bg-red-400 flex items-center gap-2 rounded-xl'>
+                                    <p><p>-${transaction.amount}</p></p>
+                                    <FaArrowTrendDown className='w-3 h-3' />
+                                  </div>
+                                    
+                                }
+                                    
 
+                                
 
-                    </div>
+                            </div>
+                      ))
+                    }
 
-                    <div className='flex justify-between items-center p-3'>
+                    
 
-                      <div className='flex gap-3 items-center'>
-
-                         <img className='w-7 rounded-full overflow-hidden object-cover bg-gray-100' src={assets.logo2} alt="" />
-
-                         <div className='flex flex-col'>
-
-                           <p className='font-semibold'>Shopping</p>
-                           <p className='font-light'>15th Aug 2025</p>
-                           
-                         </div>
-
-                      </div>
-                       
-                       <div className='px-3 py-1 bg-teal-600 flex items-center gap-2 rounded-xl'>
-
-                          <p>+$10000</p>
-                          <FaArrowTrendUp className='w-3 h-3' />
-
-                       </div>
-
-
-                    </div>
-
-                    <div className='flex justify-between items-center p-3'>
-
-                      <div className='flex gap-3 items-center'>
-
-                         <img className='w-7 rounded-full overflow-hidden object-cover bg-gray-100' src={assets.logo2} alt="" />
-
-                         <div className='flex flex-col'>
-
-                           <p className='font-semibold'>Shopping</p>
-                           <p className='font-light'>15th Aug 2025</p>
-                           
-                         </div>
-
-                      </div>
-                       
-                       <div className='px-3 py-1 bg-teal-600 flex items-center gap-2 rounded-xl'>
-
-                          <p>+$10000</p>
-                          <FaArrowTrendUp className='w-3 h-3' />
-
-                       </div>
-
-
-                    </div>
-
-                    <div className='flex justify-between items-center p-3'>
-
-                      <div className='flex gap-3 items-center'>
-
-                         <img className='w-7 rounded-full overflow-hidden object-cover bg-gray-100' src={assets.logo2} alt="" />
-
-                         <div className='flex flex-col'>
-
-                           <p className='font-semibold'>Shopping</p>
-                           <p className='font-light'>15th Aug 2025</p>
-                           
-                         </div>
-
-                      </div>
-                       
-                       <div className='px-3 py-1 bg-teal-600 flex items-center gap-2 rounded-xl'>
-
-                          <p>+$10000</p>
-                          <FaArrowTrendUp className='w-3 h-3' />
-
-                       </div>
-
-
-                    </div>
+                 
 
                     
                  </div>
@@ -219,23 +301,14 @@ const Dashboard = () => {
             {/* Financial Overview Pie Chart */}
             <div className='border-0 px-5 pt-5 pb-10 shadow-lg bg-gray-900 rounded-xl w-full sm:max-w-xl  items-center justify-center h-110 '>
 
-              <p className='text-3xl font-semibold mb-2'>Financial Overview</p>
-              <Doughnut 
-                data={data}
-                options={{
-                  responsive: true,
-                  maintainAspectRatio: false, // chart fills container
-                  cutout: '70%', 
-                  plugins: {
-                    legend: {
-                      position: 'bottom', 
-                      labels: {
-                        boxWidth: 20, 
-                        padding: 15, 
-                    },
-                  },
-                },
-              }} className="w-full h-full mb-3" />
+                  <p className='text-3xl font-semibold mb-2'>Financial Overview</p>
+
+                  <Doughnut 
+                      data={OverviewDoughnutData}
+                      options={OverviewDoughnutOptions}
+                      className="w-full h-full mb-3"
+                   />
+
             </div>  
            
             {/* Expenses */}
@@ -245,116 +318,52 @@ const Dashboard = () => {
 
                      <p className='text-3xl font-semibold'>Expenses</p>
 
-                     <div className='bg-gray-700 flex gap-1.5 items-center justify-center px-2 py-1 rounded-xl transition duration-280 hover:scale-105 hover:shadow-xl cursor-pointer'>
+                     <div onClick={()=>navigate('/Expense')} className='bg-gray-700 flex gap-1.5 items-center justify-center px-2 py-1 rounded-xl transition duration-280 hover:scale-105 hover:shadow-xl cursor-pointer'>
                           <p>See All</p>
                           <IoArrowForward />
 
                      </div>
                  </div>
 
-                 <div className='flex flex-col-reverse mt-6 gap-3'>
+                 <div className='flex flex-col mt-6 gap-3'>
+                     {
+                       FourExpenses.map((expense,index)=>(
 
-                    <div className='flex justify-between items-center p-3'>
+                          <div key={index} className='flex justify-between items-center p-3'>
 
-                      <div className='flex gap-3 items-center'>
+                              <div className='flex gap-3 items-center'>
 
-                         <img className='w-7 rounded-full overflow-hidden object-cover bg-gray-100' src={assets.logo2} alt="" />
+                                <img className='w-7 rounded-full overflow-hidden object-cover bg-gray-100' src={assets.logo2} alt="" />
 
-                         <div className='flex flex-col'>
+                                <div className='flex flex-col'>
 
-                           <p className='font-semibold'>Shopping</p>
-                           <p className='font-light'>15th Aug 2025</p>
-                           
-                         </div>
+                                  <p className='font-semibold'>{expense.expenseCategory}</p>
+                                  <p className='font-light'>
+                                       { new Date(expense.date).toLocaleDateString("en-GB",{
+                                                              day: "2-digit",
+                                                              month: "short",
+                                      })}
 
-                      </div>
-                       
-                       <div className='px-3 py-1 bg-red-400 flex items-center gap-2 rounded-xl'>
+                                  </p>
+                                  
+                                </div>
 
-                          <p>+$10000</p>
-                          <FaArrowTrendDown className='w-3 h-3'/>
+                              </div>
+                              
+                              <div className='px-3 py-1 bg-red-400 flex items-center gap-2 rounded-xl'>
 
-                       </div>
+                                  <p>+${expense.amount}</p>
+                                  <FaArrowTrendDown className='w-3 h-3'/>
 
-
-                    </div>
-     
-                    <div className='flex justify-between items-center p-3'>
-
-                      <div className='flex gap-3 items-center'>
-
-                         <img className='w-7 rounded-full overflow-hidden object-cover bg-gray-100' src={assets.logo2} alt="" />
-
-                         <div className='flex flex-col'>
-
-                           <p className='font-semibold'>Shopping</p>
-                           <p className='font-light'>15th Aug 2025</p>
-                           
-                         </div>
-
-                      </div>
-                       
-                       <div className='px-3 py-1 bg-red-400 flex items-center gap-2 rounded-xl'>
-
-                          <p>+$10000</p>
-                          <FaArrowTrendDown className='w-3 h-3'/>
-
-                       </div>
+                              </div>
 
 
-                    </div>
-
-                    <div className='flex justify-between items-center p-3'>
-
-                      <div className='flex gap-3 items-center'>
-
-                         <img className='w-7 rounded-full overflow-hidden object-cover bg-gray-100' src={assets.logo2} alt="" />
-
-                         <div className='flex flex-col'>
-
-                           <p className='font-semibold'>Shopping</p>
-                           <p className='font-light'>15th Aug 2025</p>
-                           
-                         </div>
-
-                      </div>
-                       
-                       <div className='px-3 py-1 bg-red-400 flex items-center gap-2 rounded-xl'>
-
-                          <p>+$10000</p>
-                          <FaArrowTrendDown className='w-3 h-3'/>
-
-                       </div>
-
-
-                    </div>
-
-                    <div className='flex justify-between items-center p-3'>
-
-                      <div className='flex gap-3 items-center'>
-
-                         <img className='w-7 rounded-full overflow-hidden object-cover bg-gray-100' src={assets.logo2} alt="" />
-
-                         <div className='flex flex-col'>
-
-                           <p className='font-semibold'>Shopping</p>
-                           <p className='font-light'>15th Aug 2025</p>
-                           
-                         </div>
-
-                      </div>
-                       
-                       <div className='px-3 py-1 bg-red-400 flex items-center gap-2 rounded-xl'>
-
-                          <p>+$10000</p>
-                          <FaArrowTrendDown className='w-3 h-3'/>
-
-                       </div>
-
-
-                    </div>
-
+                          </div>
+                       ))
+                     }
                     
+     
+                      
                  </div>
 
          
@@ -363,40 +372,16 @@ const Dashboard = () => {
 
 
              {/* Last 30 days Expense */}
-             <div className='border-0 px-5 pt-5 pb-2 shadow-lg bg-gray-900 rounded-xl w-full sm:max-w-xl  items-center justify-center h-110 '>
+            <div className='border-0 px-5 pt-5 pb-2 shadow-lg bg-gray-900 rounded-xl w-full sm:max-w-xl  items-center justify-center h-110 '>
 
-              <p className='text-3xl font-semibold mb-2'>Last 30 Days Expenses</p>
-              <Bar 
-                  data ={{
-                    labels: ["Week 1", "Week 2", "Week 3", "Week 4"],
-                    datasets: [
-                      {
-                        label: "Expenses",
-                        data: [450, 700, 200, 600], // Example data
-                        backgroundColor: "rgba(139,92,246,0.7)", // purple shade
-                        borderRadius: 8, // rounded corners
-                      },
-                    ],
-                   }}
+                  <p className='text-3xl font-semibold mb-2'>Last 30 Days Expenses</p>
 
-                  options = {{
-                    responsive: true,
-                    maintainAspectRatio:false,
-                    plugins: {
-                      legend: { display: false }, // hide legend
-                      title: { display: false },
-                    },
-                    scales: {
-                      y: {
-                        beginAtZero: true,
-                        ticks: {
-                          stepSize: 200,
-                        },
-                      },
-                    },
-                  }}
-                
-              className="w-full h-full mb-10 " />
+                  <Bar 
+                      data ={ExpenseBarData}
+                      options = {ExpenseBarOptions}
+                      className="w-full h-full mb-10 " 
+                  />
+
             </div>  
 
              {/* Last 60 days Income */}
@@ -405,46 +390,11 @@ const Dashboard = () => {
                 <p className='text-3xl font-semibold mb-2'>Last 60 Days Income</p>
 
                 <Doughnut 
-                      data={{
-                        labels: ["Salary", "Investments", "Interest", "Freelance", "Other Income"],
-                        datasets: [
-                          {
-                            label: "",
-                            data: [500, 200, 100, 150, 50], // Example values
-                            backgroundColor: [
-                              "rgba(139, 92, 246, 0.8)",  // Purple
-                              "rgba(16, 185, 129, 0.8)",  // Green
-                              "rgba(59, 130, 246, 0.8)",  // Blue
-                              "rgba(249, 115, 22, 0.8)",  // Orange
-                              "rgba(236, 72, 153, 0.8)",  // Pink
-                            ],
-                            borderWidth: 2,
-                            borderColor: "#fff", // White separation between slices
-                            hoverOffset: 10, // Slight pop effect on hover
-                          },
-                        ],
-                      }}
+                      data={IncomeDoughnutdata}
 
-                      options={{
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        cutout: "70%", // Donut thickness
-                        plugins: {
-                          legend: {
-                            position: "bottom",
-                            labels: {
-                              boxWidth: 18,
-                              padding: 12,
-                              color: "gray", // dark gray text
-                              font: {
-                                size: 12,
-                              },
-                            },
-                          },
-                        },
-                      }}
+                      options={IncomeDoughnutOptions}
                       className="w-full h-full mb-3"
-                    />
+                />
 
 
              </div> 
@@ -465,63 +415,52 @@ const Dashboard = () => {
 
                  <div className='flex flex-col-reverse mt-6 gap-3'>
 
-                    <div className='flex justify-between items-center'>
+                 {
+                   FourIncomes.map((income,index)=>(
+                       
+                    <div key={index} className='flex justify-between items-center p-3'>
 
-                      <div className='flex gap-3 items-center'>
+                              <div className='flex gap-3 items-center'>
 
-                         <img className='w-7 rounded-full overflow-hidden object-cover bg-gray-100' src={assets.logo2} alt="" />
+                                <img className='w-7 rounded-full overflow-hidden object-cover bg-gray-100' src={assets.logo2} alt="" />
 
-                         <div className='flex flex-col'>
+                                <div className='flex flex-col'>
 
-                           <p className='font-semibold'>Shopping</p>
-                           <p className='font-light'>15th Aug 2025</p>
-                           
-                         </div>
+                                  <p className='font-semibold'>{income.incomeSource}</p>
+                                  <p className='font-light'>
+                                       { new Date(income.date).toLocaleDateString("en-GB",{
+                                                              day: "2-digit",
+                                                              month: "short",
+                                      })}
+
+                                  </p>
+                                  
+                                </div>
+
+                              </div>
+                              
+                              <div className='px-3 py-1 bg-teal-600 flex items-center gap-2 rounded-xl'>
+
+                                  <p>+${income.amount}</p>
+                                  <FaArrowTrendUp className='w-3 h-3'/>
+
+                              </div>
+
 
                       </div>
-                       
-                       <div className='px-3 py-1 bg-green-300 flex items-center gap-2 rounded-xl'>
+                   ))
+                 }
 
-                          <p>+$10000</p>
-                         <FaArrowTrendUp className='w-3 h-3' />
-
-                       </div>
-
-
-                    </div>
-
-                   
-                    <div className='flex justify-between items-center'>
-
-                      <div className='flex gap-3 items-center'>
-
-                         <img className='w-7 rounded-full overflow-hidden object-cover bg-gray-100' src={assets.logo2} alt="" />
-
-                         <div className='flex flex-col'>
-
-                           <p className='font-semibold'>Shopping</p>
-                           <p className='font-light'>15th Aug 2025</p>
-                           
-                         </div>
-
-                      </div>
-                       
-                       <div className='px-3 py-1 bg-green-300 flex items-center gap-2 rounded-xl'>
-
-                          <p>+$10000</p>
-                          <FaArrowTrendUp className='w-3 h-3' />
-
-                       </div>
-
-
-                    </div>
-
-                    
                  </div>
 
-                    
+                 
+
+
+
+
              </div>
 
+     
             
         </div>
         

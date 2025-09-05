@@ -4,11 +4,44 @@ import { RxCross2 } from "react-icons/rx";
 import { assets } from "../assets/assets";
 import { UserContext } from '../context/UserContext';
 import { useContext } from 'react';
+import api from '../utils/Api.js';
+import { toast } from 'react-toastify';
 
 
 const Header = () => {
 
-  const {navigate,visible,setVisible} = useContext(UserContext)
+  const {navigate,visible,setVisible,user,setUser} = useContext(UserContext)
+
+  const handleLogout = async() => {
+
+       try {
+          const response = await api.post('/user/logout');
+
+          console.log(response.data)
+
+          if(response.data.success)
+          {
+              navigate('/login')
+
+              setUser("")
+
+              localStorage.removeItem("user")
+          }
+       } catch (error) {
+
+            if (error.response) {
+                // This will log your backend's JSON error message
+                console.log(error.response.data);
+                toast.error(error.response.data.message)
+                
+            } else {
+                // Network or other error
+                console.log(error.message)
+            }
+       }
+        
+       
+  }
     
   return (
 
@@ -35,8 +68,10 @@ const Header = () => {
                 <p className="md:hidden text-white font-bold text-3xl my-auto">Monify</p>
     
                 
-               <button onClick={()=>navigate('/login')} className="bg-teal-500 text-white font-bold px-3 lg:px-5 py-2 rounded-2xl md:rounded-3xl my-auto mr-4  cursor-pointer transition-color transition-transform delay-50 hover:scale-110 hover:bg-teal-600 ">
-                        Login
+               <button onClick={()=> localStorage.getItem("user") ? handleLogout() : navigate('/login')} className="bg-teal-500 text-white font-bold px-3 lg:px-5 py-2 rounded-2xl md:rounded-3xl my-auto mr-4  cursor-pointer transition-color transition-transform delay-50 hover:scale-110 hover:bg-teal-600 ">
+
+                       {localStorage.getItem("user")? "Logout" : "Login"} 
+
                 </button>
                 
               

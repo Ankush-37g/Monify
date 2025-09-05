@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react';
 import { assets } from '../assets/assets';
 import { UserContext } from '../context/UserContext';
-import axios from "axios"
+import api from '../utils/Api.js';
 import {toast} from "react-toastify"
 import { GoogleLogin } from '@react-oauth/google';
 
@@ -16,7 +16,7 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
-  const {navigate,backendUrl} =  useContext(UserContext)
+  const {navigate,setUser,user} =  useContext(UserContext)
 
   // A simple function to handle the form submission.
   const handleSubmit = async(e) => {
@@ -26,39 +26,49 @@ const Login = () => {
       try {
         if(currentState === "signUp")
         {
-          const response = await axios.post(backendUrl + "/api/user/signup",{name,email,password})
+          const response = await api.post("/user/signup",{name,email,password})
 
           console.log(response.data);
 
           if(response.data.success)
           {
+             setUser(response.data.data.user.name)
+             
              toast.success("Account created Successfully")
 
              setCurrentState("login")
+   
           }
         }
         else if(currentState === "login")
         {
-            const response = await axios.post(backendUrl + "/api/user/login",{email,password})
+            const response = await api.post("/user/login",{email,password})
 
             console.log(response.data)
 
             if(response.data.success)
             {
+              setUser(response.data.data.user.name)
+
+              localStorage.setItem('user',response.data.data.user.name)
+
               toast.success("Login Successfull")
 
               navigate('/dashboard')
+              
             }
         }
         else if(currentState === "resetPassword")
         {
-            const response = await axios.post(backendUrl + "/api/user/resetPassword",{email,password,confirmPassword})
+            const response = await api.post("/user/resetPassword",{email,password,confirmPassword})
 
             console.log(response.data)
 
             if(response.data.success)
             {
-              
+              toast.success("Password reset successfully")
+
+              setCurrentState("login")
             }
         }
       } catch (error) {
@@ -67,6 +77,7 @@ const Login = () => {
           if (error.response) {
               // This will log your backend's JSON error message
               console.log(error.response.data);
+              toast.error(error.response.data.message)
               
           } else {
               // Network or other error
@@ -204,23 +215,37 @@ const Login = () => {
               <div className='mt-6 flex items-center justify-center '>
 
                   <GoogleLogin
+
                       onSuccess={async (credentialResponse) => {
-                        const response = await axios.post(
-                          backendUrl + "/api/user/google",
+
+                        const response = await api.post(
+
+                          "/user/google",
                           {
                             token: credentialResponse.credential, // 👈 this is the id_token
                           },
-                          { withCredentials: true }
+                          
                         );
 
+                        console.log(response.data)
+
                         if (response.data.success) {
+
+                          setUser(response.data.data.user.name);
+
+                          localStorage.setItem('user',response.data.data.user.name)
+
                           toast.success("Login Successful with Google");
+
                           navigate("/dashboard");
+
                         } else {
+
                           toast.error("Google login failed on backend");
                         }
                       }}
                       onError={() => {
+
                         toast.error("Google Login Cancelled/Failed");
                       }}
                  />

@@ -3,12 +3,16 @@ import { FaMoneyBillWave, FaChartPie, FaSignOutAlt } from 'react-icons/fa';
 import { MdOutlineSpaceDashboard } from "react-icons/md";
 import { Link, useLocation } from 'react-router-dom';
 import {useState} from 'react'
+import { useContext } from 'react';
+import { UserContext } from '../context/UserContext';
 
 const Sidebar = () => {
 
   const location = useLocation()
 
   const [activeIndex, setActiveIndex] = useState(null)
+
+  const {user} = useContext(UserContext)
   
   const navItems = [
     {
@@ -45,7 +49,7 @@ const Sidebar = () => {
             className="object-cover w-full h-full"
           />
         </div>
-        <h2 className="text-xl font-bold text-white mb-8">Ankush Sharma</h2>
+        <h2 className="text-xl font-bold text-white mb-8">{localStorage.getItem("user")}</h2>
       </div>
 
       {/* Navigation Links */}
