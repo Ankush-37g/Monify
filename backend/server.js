@@ -43,10 +43,12 @@ import { userRouter } from "./routes/UserRoutes.js"
 import { incomeRouter } from "./routes/IncomeRoutes.js"
 import { errorHandler } from "./middleware/ErrorHandler.js"
 import { expenseRouter } from "./routes/ExpenseRoutes.js"
+import { budgetRouter } from "./routes/BudgetRoutes.js"
 
 app.use('/api/user',userRouter)
 app.use('/api/income',incomeRouter)
 app.use('/api/expense',expenseRouter)
+app.use('/api/budget',budgetRouter)
 
 
 app.use(errorHandler)
