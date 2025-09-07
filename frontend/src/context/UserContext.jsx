@@ -21,11 +21,13 @@ const UserContextProvider = ({children}) => {
 
     const [expenses , setExpenses] = useState([])
 
+     const [budgets, setBudgets] = useState([]);
+
     const [visible, setVisible] = useState(false)
 
     const [user, setUser] = useState("")
 
-    const value = {navigate,balance,incomes,setIncomes, expenses,setExpenses,visible,setVisible,user,setUser,totalIncome,totalExpense}
+    const value = {navigate,balance,incomes,setIncomes, expenses,setExpenses,visible,setVisible,user,setUser,totalIncome,totalExpense,budgets,setBudgets}
 
     const getTotalIncome = () => {
           
@@ -75,7 +77,7 @@ const UserContextProvider = ({children}) => {
           try {
             const response = await api.post('/expense/list',{});
 
-            // console.log(response.data);
+            console.log(response.data);
 
             if(response.data.success)
             {
@@ -83,6 +85,32 @@ const UserContextProvider = ({children}) => {
                        (a, b) => new Date(a.date) - new Date(b.date)
                 );
                 setExpenses(sortedExpenses)
+            }
+          } catch (error) {
+            
+              if(error.response)
+              {
+                 toast.error(error.response.data.message)
+                 console.log(error.response.data)
+              }
+              else
+              {
+                 toast.error(error.message)
+                 console.log(error.message)  
+              }
+          }
+    }
+
+    const getBudgetData = async() => {
+        
+          try {
+            const response = await api.post('/budget/list',{});
+
+            console.log(response.data);
+
+            if(response.data.success)
+            {  
+                setBudgets(response.data.data)
             }
           } catch (error) {
             
@@ -110,6 +138,8 @@ const UserContextProvider = ({children}) => {
              getIncomeData()
 
              getExpenseData()
+
+             getBudgetData()
         
           }
 

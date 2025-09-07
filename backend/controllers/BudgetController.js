@@ -13,9 +13,9 @@ const addBudget = asyncHandler( async(req, res)=>{
            throw new ApiError(404, "User not found");
       }
 
-      const {category, amount, monthYear} = req.body
+      const {category, amount, month} = req.body
 
-      if(!category || !amount || !monthYear)
+      if(!category || !amount || !month)
       {
           throw new ApiError(400, "All fields are required")
       }
@@ -23,7 +23,7 @@ const addBudget = asyncHandler( async(req, res)=>{
       const budget = await Budget.create({
             category,
             amount,
-            monthYear,
+            month,
             user: user._id
       })
 
@@ -50,7 +50,7 @@ const deleteBudget = asyncHandler( async(req, res)=> {
 
 const listBudgets = asyncHandler( async(req, res)=>{
       
-      const budgets = await Budget.findBy({user: req.user._id})
+      const budgets = await Budget.find({user: req.user._id})
 
       return res
             .status(200)

@@ -2,10 +2,11 @@ import mongoose , {Schema} from  "mongoose"
 
 const budgetSchema = new Schema(
     {
-       user : {type: mongoose.Schema.Types.ObjectId, ref: "User", required: true},
        category: {type: String, required: true, trim: true},
        amount : {type: Number, required: true},
-       monthYear : {type: String, required: true}
+       month : {type: String, required: true},
+       user : {type: mongoose.Schema.Types.ObjectId, ref: "User", required: true},
+      
     },
     {
         timestamps: true

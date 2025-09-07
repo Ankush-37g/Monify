@@ -1,5 +1,5 @@
 import React from 'react';
-import { FaMoneyBillWave, FaChartPie, FaSignOutAlt } from 'react-icons/fa';
+import { FaMoneyBillWave, FaChartPie, FaHandHoldingUsd  } from 'react-icons/fa';
 import { MdOutlineSpaceDashboard } from "react-icons/md";
 import { Link, useLocation } from 'react-router-dom';
 import {useState} from 'react'
@@ -31,10 +31,11 @@ const Sidebar = () => {
     
     },
     {
-      name: 'Logout',
-      icon: <FaSignOutAlt className="text-xl" />,
-      
+      name: 'Budget',
+      icon: <FaHandHoldingUsd className='text-xl' />
+    
     },
+    
   ];
 
   return (
