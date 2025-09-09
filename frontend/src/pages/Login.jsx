@@ -100,14 +100,15 @@ const Login = () => {
           {/* Left panel - visible only on medium and larger screens */}
           <div className="hidden  h-full md:w-1/2 shadow-lg bg-gradient-to-br from-cyan-500 to-teal-500 rounded-xl p-8 md:flex flex-col justify-center items-center">
           {/* Using a placeholder for a growth chart to better visualize the app's purpose */}
-          <div className="text-center text-white space-y-4">
+          <div className="text-center text-white space-y-4 p-">
             <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight drop-shadow-md mb-4">
-              Welcome to Monify Manage your money with ease!
+              Welcome to Monify!
             </h2>
+            <p className='text-xl'>Your Personal Finance Tracker</p>
             <img 
               src={assets.logo}
               alt="A visual representation of financial data" 
-              className="rounded-xl shadow-lg max-w-sm mx-auto"
+              className="rounded-xl shadow-lg w-sm mx-auto"
             />
           </div>
          </div>
