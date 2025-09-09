@@ -25,6 +25,10 @@ const Income = () => {
 
   const [date, setDate] = useState("")
 
+  const [isRecurring,setIsRecurring] = useState(false)
+
+  const [frequency, setFrequency] = useState(null)
+
 
   const data ={
       labels: incomes.map(income => 
@@ -95,7 +99,7 @@ const Income = () => {
 
        try {
          
-          const response = await api.post('/income/add', {incomeSource,amount,date});
+          const response = await api.post('/income/add', {incomeSource,amount,date,isRecurring,frequency});
 
           console.log(response.data)
 
@@ -309,6 +313,30 @@ const Income = () => {
                       
                      />
                   </div>
+                  
+                  <div className="flex flex-col gap-1 mb-3">
+
+                      <label className="flex items-center gap-2 ">
+
+                          <input type="checkbox" checked={isRecurring} onChange={(e) => setIsRecurring(e.target.checked)} />
+                          Set as regular income
+
+                      </label>
+
+                      {isRecurring && (
+                        <select
+                          value={frequency}
+                          onChange={(e) => setFrequency(e.target.value)}
+                          className="mt-2 p-2 bg-gray-200 border  rounded-lg"
+                        >
+                          <option value="daily">Daily</option>
+                          <option value="weekly">Weekly</option>
+                          <option value="monthly">Monthly</option>
+                          <option value="yearly">Yearly</option>
+                        </select>
+                      )}
+                  </div>
+
 
                   <button 
                     type="submit" 

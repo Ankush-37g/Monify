@@ -10,7 +10,7 @@ import { assets } from '../assets/assets';
 
 const Dashboard = () => {
 
-   const {navigate,totalIncome,totalExpense,balance,expenses,incomes} = useContext(UserContext)
+   const {navigate,totalIncome,totalExpense,balance,expenses,incomes,budgets} = useContext(UserContext)
 
    const today = new Date()
    
@@ -30,6 +30,9 @@ const Dashboard = () => {
    const FourExpenses = expenses.slice(-4).reverse()
 
    const FourIncomes = incomes.slice(-4).reverse()
+
+   const FourBudgets = budgets.slice(-3).reverse()
+
 
    const transactions = [
 
@@ -245,7 +248,7 @@ const Dashboard = () => {
                     {
                       recentTransactions.map((transaction,index)=>(
 
-                           <div className='flex justify-between items-center p-3 '>
+                           <div key = {index} className='flex justify-between items-center p-3 '>
 
                                 <div className='flex gap-3 items-center'>
 
@@ -301,13 +304,77 @@ const Dashboard = () => {
             {/* Financial Overview Pie Chart */}
             <div className='border-0 px-5 pt-5 pb-10 shadow-lg bg-gray-900 rounded-xl w-full sm:max-w-xl  items-center justify-center h-110 '>
 
-                  <p className='text-3xl font-semibold mb-2'>Financial Overview</p>
+                  <div className='flex justify-between items-center'>
 
-                  <Doughnut 
-                      data={OverviewDoughnutData}
-                      options={OverviewDoughnutOptions}
-                      className="w-full h-full mb-3"
-                   />
+                     <p className='text-3xl font-semibold '>My Budgets</p>
+
+                     <div onClick={()=>navigate('/Budget')} className='bg-gray-700 flex gap-1.5 items-center justify-center px-2 py-1 rounded-xl transition duration-280 hover:scale-105 hover:shadow-xl cursor-pointer'>
+                          <p>See All</p>
+                          <IoArrowForward />
+
+                     </div>
+                 </div>
+
+                  {
+                    FourBudgets.map((budget, index) => {
+
+                        const totalSpent = expenses
+                                            .filter(e => e.expenseCategory === budget.category)
+                                            .reduce((sum,e)=> sum + e.amount, 0)
+
+                        const remaining = budget.amount - totalSpent;
+
+                        const progress = (totalSpent / budget.amount) * 100;
+
+                        let progressBarColor = 'bg-green-500';
+
+                        if (progress >= 100) 
+                        {
+                          progressBarColor = 'bg-red-500';
+
+                        } else if (progress > 80) 
+                        {
+                          progressBarColor = 'bg-yellow-500';
+                        }
+
+                        return (
+                          <div key={index} className="backdrop-blur-sm my-5 bg-gray-800/70 p-3 rounded-2xl shadow-lg border border-gray-700">
+
+                            <div className="flex flex-col    group">
+
+                              <h3 className="text-xl font-bold text-blue-400">{budget.category}</h3>
+                                    
+                                                    
+                              <div className="flex items-center space-x-4 text-sm font-medium">
+
+                                <span className="text-gray-400">
+                                  Budgeted: <span className="text-gray-100">${budget.amount}</span>
+                                </span>
+
+                                <span className="text-gray-400">
+                                  Spent: <span className="text-gray-100">${totalSpent}</span>
+                                </span>
+
+                                <span className="text-gray-400">
+                                  Remaining: <span className="text-gray-100">${Math.max(0, remaining)}</span>
+                                </span>
+
+                              </div>
+
+                            </div>
+
+                  
+
+                            {/* progress bar */}
+                            <div className="w-full h-2 bg-gray-700 rounded-full mt-4">
+                              <div
+                                className={`progress-bar h-2 rounded-full ${progressBarColor}`}
+                                style={{ width: `${Math.min(100, progress)}%` }}
+                              ></div>
+                            </div>
+                          </div>
+                      );
+                    })}
 
             </div>  
            

@@ -25,7 +25,9 @@ const Expense = () => {
 
   const [date, setDate] = useState("")
 
-  
+  const [isRecurring, setIsRecurring] = useState(false)
+
+  const [frequency,setFrequency] = useState(null)
   
 
   const data = {
@@ -93,7 +95,7 @@ const Expense = () => {
 
        try {
          
-          const response = await api.post('/expense/add', {expenseCategory,amount,date});
+          const response = await api.post('/expense/add', {expenseCategory,amount,date,isRecurring,frequency});
 
           console.log(response.data)
 
@@ -312,6 +314,29 @@ const Expense = () => {
                         className="w-xl border bg-white/20 border-black px-3 py-3 rounded focus:border-2 "
                       
                      />
+                  </div>
+
+                   <div className="flex flex-col gap-1 mb-3">
+
+                      <label className="flex items-center gap-2 ">
+
+                          <input type="checkbox" checked={isRecurring} onChange={(e) => setIsRecurring(e.target.checked)} />
+                          Set as regular expense
+
+                      </label>
+
+                      {isRecurring && (
+                        <select
+                          value={frequency}
+                          onChange={(e) => setFrequency(e.target.value)}
+                          className="mt-2 p-2 bg-gray-200 border  rounded-lg"
+                        >
+                          <option value="daily">Daily</option>
+                          <option value="weekly">Weekly</option>
+                          <option value="monthly">Monthly</option>
+                          <option value="yearly">Yearly</option>
+                        </select>
+                      )}
                   </div>
 
                   <button 

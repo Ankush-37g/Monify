@@ -128,18 +128,18 @@ const UserContextProvider = ({children}) => {
     }
 
 
+    
     useEffect( ()=> {
-
-         
+   
           const storedUser = localStorage.getItem("user")
 
-          if(storedUser)
+          if(user || storedUser)
           {
              getIncomeData()
 
              getExpenseData()
 
-             getBudgetData()
+             getBudgetData() 
         
           }
 
@@ -161,6 +161,8 @@ const UserContextProvider = ({children}) => {
         }
 
     }, [totalIncome, totalExpense]);
+
+
 
     return (
         <UserContext.Provider value = {value}>

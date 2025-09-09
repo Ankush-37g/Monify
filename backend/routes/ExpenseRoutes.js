@@ -10,5 +10,8 @@ expenseRouter.post('/delete',verifyJWT,deleteExpense)
 
 expenseRouter.post('/list',verifyJWT,listExpenses)
 
+expenseRouter.post('/update',verifyJWT,)
+
+
 export {expenseRouter}
 

@@ -13,7 +13,7 @@ const app = express()
 
 connectDB()
 .then(()=>{
-    app.listen(process.env.PORT || 6000 , ()=>{
+    app.listen(process.env.PORT || 5000 , ()=>{
         console.log(`Server is running on port : ${process.env.PORT}`)
     })
 })
@@ -45,11 +45,14 @@ import { errorHandler } from "./middleware/ErrorHandler.js"
 import { expenseRouter } from "./routes/ExpenseRoutes.js"
 import { budgetRouter } from "./routes/BudgetRoutes.js"
 
+
+
 app.use('/api/user',userRouter)
 app.use('/api/income',incomeRouter)
 app.use('/api/expense',expenseRouter)
 app.use('/api/budget',budgetRouter)
 
+app.get('/',(req,res)=> {res.send("Api working")})
 
 app.use(errorHandler)
 
