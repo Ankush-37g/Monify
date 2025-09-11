@@ -1,7 +1,7 @@
 // utils/api.js
 import axios from "axios";
 
-const baseURL = import.meta.env.BACKEND_URL || "http://localhost:5000/api";
+const baseURL = import.meta.env.VITE_BACKEND_URL;
 // 1️⃣ Create an axios instance (so all API requests share settings)
 const api = axios.create({
   baseURL,
