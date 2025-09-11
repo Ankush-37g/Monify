@@ -1,10 +1,10 @@
 // utils/api.js
 import axios from "axios";
 
-
+const baseURL = import.meta.env.BACKEND_URL || "http://localhost:5000/api";
 // 1️⃣ Create an axios instance (so all API requests share settings)
 const api = axios.create({
-  baseURL: "http://localhost:5000/api",
+  baseURL,
   withCredentials: true, // send cookies (accessToken, refreshToken) automatically
 });
 
@@ -27,7 +27,7 @@ api.interceptors.response.use(
 
       try {
         // 4️⃣ Call backend refresh route
-        await axios.post("http://localhost:5000/api/user/refresh-token", {}, { withCredentials: true });
+        await axios.post(baseURL + "/user/refresh-token", {}, { withCredentials: true });
 
         // 5️⃣ Retry the original request with new token
         return api(originalRequest);
