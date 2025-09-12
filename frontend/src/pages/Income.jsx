@@ -12,11 +12,11 @@ import { useContext } from "react";
 import { UserContext } from "../context/UserContext.jsx";
 import { toast } from "react-toastify";
 import api from "../utils/Api.js";
-import { set } from "mongoose";
+
 
 const Income = () => {
 
-  const {incomes,setIncomes} = useContext(UserContext)
+  const {incomes,setIncomes,setIsLoading} = useContext(UserContext)
 
   const [isOpen, setIsOpen] = useState(false)
 
