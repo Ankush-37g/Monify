@@ -28,15 +28,19 @@ const Login = () => {
         {
           const response = await api.post("/user/signup",{name,email,password})
 
-          console.log(response.data);
+          // console.log(response.data);
 
           if(response.data.success)
           {
-             setUser(response.data.data.user.name)
-             
+                 
              toast.success("Account created Successfully")
 
              setCurrentState("login")
+
+             setName("")
+             setEmail("")
+             setPassword("")
+             
    
           }
         }
@@ -55,6 +59,9 @@ const Login = () => {
               toast.success("Login Successfull")
 
               navigate('/dashboard')
+
+              setEmail("")
+              setPassword("")
               
             }
         }
@@ -69,6 +76,10 @@ const Login = () => {
               toast.success("Password reset successfully")
 
               setCurrentState("login")
+
+              setEmail("")
+              setPassword("")
+              setConfirmPassword("")
             }
         }
       } catch (error) {
