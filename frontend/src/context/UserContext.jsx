@@ -26,8 +26,36 @@ const UserContextProvider = ({children}) => {
     const [visible, setVisible] = useState(false)
 
     const [user, setUser] = useState("")
+    
+    const [avatarUrl, setAvatarUrl] = useState(() => {
 
-    const value = {navigate,balance,incomes,setIncomes, expenses,setExpenses,visible,setVisible,user,setUser,totalIncome,totalExpense,budgets,setBudgets}
+        const storedUrl = localStorage.getItem("avatarUrl");
+        if (storedUrl) return storedUrl;
+        
+        const randomNum = Math.floor(Math.random() * 50) + 1;
+        const newUrl = `https://avatar.iran.liara.run/public/${randomNum}`;
+        localStorage.setItem("avatarUrl", newUrl);
+        return newUrl;
+    })
+
+    const value = {
+        navigate,
+        balance,
+        incomes,
+        setIncomes, 
+        expenses,
+        setExpenses,
+        visible,
+        setVisible,
+        user,
+        setUser,
+        totalIncome,
+        totalExpense,
+        budgets,
+        setBudgets,
+        avatarUrl,
+        setAvatarUrl
+    }
 
     const getTotalIncome = () => {
           

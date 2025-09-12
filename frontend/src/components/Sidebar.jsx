@@ -2,8 +2,7 @@ import React from 'react';
 import { FaMoneyBillWave, FaChartPie, FaHandHoldingUsd  } from 'react-icons/fa';
 import { MdOutlineSpaceDashboard } from "react-icons/md";
 import { Link, useLocation } from 'react-router-dom';
-import {useState} from 'react'
-import { useContext } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import { UserContext } from '../context/UserContext';
 
 const Sidebar = () => {
@@ -12,8 +11,24 @@ const Sidebar = () => {
 
   const [activeIndex, setActiveIndex] = useState(null)
 
-  const {user} = useContext(UserContext)
+  const {user, avatarUrl, setAvatarUrl} = useContext(UserContext)
   
+  useEffect(() => {
+
+    if (!localStorage.getItem("avatarUrl")) 
+    {
+      const randomNum = Math.floor(Math.random() * 50) + 1;
+      const newAvatarUrl = `https://avatar.iran.liara.run/public/${randomNum}`;
+      setAvatarUrl(newAvatarUrl);
+      localStorage.setItem("avatarUrl", newAvatarUrl);
+    }
+    else
+    {
+      setAvatarUrl(localStorage.getItem("avatarUrl"));
+    }
+      
+  }, [setAvatarUrl]);
+
   const navItems = [
     {
       name: 'Dashboard',
@@ -45,7 +60,7 @@ const Sidebar = () => {
       <div className="flex flex-col items-center p-4">
         <div className="relative w-24 h-24 mb-4 rounded-full bg-gray-800 border-4 border-teal-400 overflow-hidden shadow-lg">
           <img
-            src="https://placehold.co/100x100/A0B2C9/FFFFFF?text=User"
+            src={avatarUrl}
             alt="User profile"
             className="object-cover w-full h-full"
           />

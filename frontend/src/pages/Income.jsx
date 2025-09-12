@@ -154,7 +154,7 @@ const Income = () => {
          }
     }
   }
-                        
+                
 
   return (
     <div className='flex flex-col gap-4  relative text-gray-200'>
@@ -247,108 +247,98 @@ const Income = () => {
                 
           </div>
 
+          {/* Add Income Modal */}
+          <div className={`fixed inset-0 flex text-black justify-center items-center z-50 px-4 transition-opacity duration-300 ${
+              isOpen ? "opacity-100 visible bg-black/50 backdrop-blur-sm" : "opacity-0 invisible"
+          }`}>
 
-         {/* Add Income */}
-          <div className={`fixed inset-0 flex justify-center items-center z-50 transition-opacity duration-300 ${
-              isOpen ? "opacity-100 visible bg-transparent bg-opacity-30 backdrop-blur-xs" : "opacity-0 invisible"
-                }`}>
-
-            <div
-              className={`bg-gray-200 rounded-xl p-5 shadow-lg shadow-gray-700 text-black transform transition-transform duration-300 ${
-                isOpen ? "scale-100" : "scale-90"
-              }`}
-            >
+            <div className={`bg-gray-200 rounded-xl p-4 sm:p-5 shadow-lg w-full max-w-md mx-auto transform transition-transform duration-300 ${
+              isOpen ? "scale-100" : "scale-90"
+            }`}>
+              {/* Modal Header */}
               <div className="flex justify-between items-center mb-3">
-
-                <p className="text-2xl font-semibold ">Add Income</p>
-
+                <p className="text-xl sm:text-2xl font-semibold">Add Income</p>
                 <RxCross2
                   onClick={() => setIsOpen(false)}
-                  className="w-6 h-6 cursor-pointer"
+                  className="w-6 h-6 cursor-pointer hover:text-gray-700"
                 />
-
               </div>
 
-              <hr className="font-extralight mb-8"/>
+              <hr className="border-gray-300 mb-6"/>
 
-              <form onSubmit={onSubmitHandler}>
+              {/* Form */}
+              <form onSubmit={onSubmitHandler} className="space-y-4">
+                {/* Income Source Field */}
+                <div className="space-y-1">
+                  <label className="text-sm font-medium">Income Source</label>
+                  <input
+                    type="text"
+                    value={incomeSource}
+                    onChange={(e) => setIncomeSource(e.target.value)}
+                    placeholder="Salary, Freelance ..."
+                    className="w-full px-3 py-2 sm:py-3 rounded border border-gray-400 bg-white/20 focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                  />
+                </div>
 
+                {/* Amount Field */}
+                <div className="space-y-1">
+                  <label className="text-sm font-medium">Amount</label>
+                  <input
+                    type="text"
+                    value={amount}
+                    onChange={(e) => setAmount(e.target.value)}
+                    placeholder="Enter amount"
+                    className="w-full px-3 py-2 sm:py-3 rounded border border-gray-400 bg-white/20 focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                  />
+                </div>
 
-                 <div className="flex flex-col gap-1 mb-3 ">
-                   <p>Income Source</p>
-                   <input
-                      type="text"
-                      id="IncomeSource"
-                      value={incomeSource}
-                      onChange={(e) => setIncomeSource(e.target.value)}
-                      placeholder="Salary, Freelance ..."
-                      className="w-xl border bg-white/20  border-black px-3 py-3 rounded focus:border-2 "
-                     
+                {/* Date Field */}
+                <div className="space-y-1">
+                  <label className="text-sm font-medium">Date</label>
+                  <input
+                    type="date"
+                    value={date}
+                    onChange={(e) => setDate(e.target.value)}
+                    className="w-full px-3 py-2 sm:py-3 rounded border border-gray-400 bg-white/20 focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                  />
+                </div>
+
+                {/* Recurring Income Options */}
+                <div className="space-y-2">
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input 
+                      type="checkbox" 
+                      checked={isRecurring} 
+                      onChange={(e) => setIsRecurring(e.target.checked)}
+                      className="rounded border-gray-400 text-teal-600 focus:ring-teal-500"
                     />
-                 </div>
-                  
+                    <span className="text-sm font-medium">Set as regular income</span>
+                  </label>
 
-                 <div className="flex flex-col gap-1 mb-3">
-                    <p>Amount</p>
-                    <input
-                        type="text"
-                        id="amount"
-                        value={amount}
-                        onChange={(e) => setAmount(e.target.value)}
-                        placeholder="amount"
-                        className="w-xl border bg-white/20 border-black px-3 py-3 rounded focus:border-2 "
-                      
-                      />
-                 </div>
+                  {isRecurring && (
+                    <select
+                      value={frequency}
+                      onChange={(e) => setFrequency(e.target.value)}
+                      className="w-full mt-2 px-3 py-2 bg-white/20 border border-gray-400 rounded focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                    >
+                      <option value="">Select frequency</option>
+                      <option value="daily">Daily</option>
+                      <option value="weekly">Weekly</option>
+                      <option value="monthly">Monthly</option>
+                      <option value="yearly">Yearly</option>
+                    </select>
+                  )}
+                </div>
 
-                  <div className="flex flex-col gap-1 mb-3">
-                    <p>Date</p>
-                    <input
-                        type="date"
-                        id="date"
-                        value={date}
-                        onChange={(e) => setDate(e.target.value)}
-                        placeholder="date"
-                        className="w-xl border bg-white/20 border-black px-3 py-3 rounded focus:border-2 "
-                      
-                     />
-                  </div>
-                  
-                  <div className="flex flex-col gap-1 mb-3">
-
-                      <label className="flex items-center gap-2 ">
-
-                          <input type="checkbox" checked={isRecurring} onChange={(e) => setIsRecurring(e.target.checked)} />
-                          Set as regular income
-
-                      </label>
-
-                      {isRecurring && (
-                        <select
-                          value={frequency}
-                          onChange={(e) => setFrequency(e.target.value)}
-                          className="mt-2 p-2 bg-gray-200 border  rounded-lg"
-                        >
-                          <option value="daily">Daily</option>
-                          <option value="weekly">Weekly</option>
-                          <option value="monthly">Monthly</option>
-                          <option value="yearly">Yearly</option>
-                        </select>
-                      )}
-                  </div>
-
-
-                  <button 
-                    type="submit" 
-                    className="w-full bg-black text-white py-2 px-4 rounded mt-4 hover:bg-gray-800 cursor-pointer"
-                  >
-                    Add Income
-                  </button>
-                    
+                {/* Submit Button */}
+                <button 
+                  type="submit" 
+                  className="w-full bg-black text-white py-2.5 sm:py-3 rounded font-medium hover:bg-gray-800 transition-colors duration-200"
+                >
+                  Add Income
+                </button>
               </form>
-
             </div>
-
           </div>
 
           

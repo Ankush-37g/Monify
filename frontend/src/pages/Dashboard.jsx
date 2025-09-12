@@ -278,7 +278,7 @@ const Dashboard = () => {
                                   </div>
                                   :
                                     <div className='px-3 py-1 bg-red-400 flex items-center gap-2 rounded-xl'>
-                                    <p><p>-${transaction.amount}</p></p>
+                                    <p>-${transaction.amount}</p>
                                     <FaArrowTrendDown className='w-3 h-3' />
                                   </div>
                                     

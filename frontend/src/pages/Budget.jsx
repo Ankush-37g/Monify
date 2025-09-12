@@ -250,84 +250,82 @@ const Budgets = () => {
                 
           </div>
 
-          {/* Add Budget */}
-          <div className={`fixed inset-0 flex justify-center items-center z-50 transition-opacity duration-300 ${
-              isOpen ? "opacity-100 visible bg-transparent bg-opacity-30 backdrop-blur-xs" : "opacity-0 invisible"
-                }`}>
-
-            <div
-              className={`bg-gray-200 rounded-xl p-5 shadow-lg shadow-gray-700 text-black transform transition-transform duration-300 ${
-                isOpen ? "scale-100" : "scale-90"
-              }`}
-            >
+          {/* Add Budget Modal */}
+          <div className={`fixed inset-0 flex justify-center items-center z-50 px-4 transition-opacity duration-300 ${
+              isOpen ? "opacity-100 visible bg-black/50 backdrop-blur-sm" : "opacity-0 invisible"
+          }`}>
+            <div className={`bg-gray-200 rounded-xl p-4 sm:p-5 shadow-lg w-full max-w-md mx-auto transform transition-transform duration-300 ${
+              isOpen ? "scale-100" : "scale-90"
+            }`}>
+              {/* Modal Header */}
               <div className="flex justify-between items-center mb-3">
-
-                <p className="text-2xl font-semibold ">Add Budget</p>
-
+                <p className="text-xl sm:text-2xl font-semibold">Add Budget</p>
                 <RxCross2
                   onClick={() => setIsOpen(false)}
-                  className="w-6 h-6 cursor-pointer"
+                  className="w-6 h-6 cursor-pointer hover:bg-gray-300 rounded-full p-1"
                 />
-
               </div>
 
-              <hr className="font-extralight mb-8"/>
+              <hr className="border-gray-300 mb-6"/>
 
-              <form onSubmit={onSubmitHandler}>
+              {/* Form */}
+              <form onSubmit={onSubmitHandler} className="space-y-4">
+                {/* Category Field */}
+                <div className="space-y-1">
+                  <label htmlFor="category" className="text-sm font-medium">Category</label>
+                  <input
+                    type="text"
+                    id="category"
+                    value={category}
+                    onChange={(e) => setCategory(e.target.value)}
+                    placeholder="Food, Travel, Subscriptions..."
+                    className="w-full px-3 py-2 sm:py-3 rounded border border-gray-400 bg-white/20 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    required
+                  />
+                </div>
 
-
-                 <div className="flex flex-col gap-1 mb-3 ">
-                   <p>Category</p>
-                   <input
-                      type="text"
-                      id="category"
-                      value={category}
-                      onChange={(e) => setCategory(e.target.value)}
-                      placeholder="Food, Travel , Subscriptions....."
-                      className="w-xl border bg-white/20  border-black px-3 py-3 rounded focus:border-2 "
-                     
+                {/* Amount Field */}
+                <div className="space-y-1">
+                  <label htmlFor="amount" className="text-sm font-medium">Amount</label>
+                  <div className="relative">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">₹</span>
+                    <input
+                      type="number"
+                      id="amount"
+                      value={amount}
+                      onChange={(e) => setAmount(e.target.value)}
+                      placeholder="0.00"
+                      className="w-full px-3 py-2 sm:py-3 rounded border border-gray-400 bg-white/20 focus:ring-2 focus:ring-blue-500 focus:border-transparent pl-7"
+                      required
+                      min="0"
+                      step="0.01"
                     />
-                 </div>
-                  
-
-                 <div className="flex flex-col gap-1 mb-3">
-                    <p>Amount</p>
-                    <input
-                        type="text"
-                        id="amount"
-                        value={amount}
-                        onChange={(e) => setAmount(e.target.value)}
-                        placeholder="amount"
-                        className="w-xl border bg-white/20 border-black px-3 py-3 rounded focus:border-2 "
-                      
-                      />
-                 </div>
-
-                  <div className="flex flex-col gap-1 mb-3">
-                    <p>Month</p>
-                    <input
-                        type="month"
-                        id="month"
-                        value={month}
-                        onChange={(e) => setMonth(e.target.value)}
-                        placeholder="date"
-                        className="w-xl border bg-white/20 border-black px-3 py-3 rounded focus:border-2 "
-                      
-                     />
                   </div>
+                </div>
 
-                  <button 
-                    type="submit" 
-                    className="w-full bg-black text-white py-2 px-4 rounded mt-4 hover:bg-gray-800 cursor-pointer"
-                  >
-                    Set Budget
-                  </button>
-                    
+                {/* Month Field */}
+                <div className="space-y-1">
+                  <label htmlFor="month" className="text-sm font-medium">Month</label>
+                  <input
+                    type="month"
+                    id="month"
+                    value={month}
+                    onChange={(e) => setMonth(e.target.value)}
+                    className="w-full px-3 py-2 sm:py-3 rounded border border-gray-400 bg-white/20 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    required
+                  />
+                </div>
+
+                {/* Submit Button */}
+                <button 
+                  type="submit" 
+                  className="w-full bg-black text-white py-2.5 sm:py-3 rounded font-medium hover:bg-gray-800 transition-colors duration-200 mt-6"
+                >
+                  Set Budget
+                </button>
               </form>
-
             </div>
-
-          </div>          
+          </div>
              
       </div>
   )
