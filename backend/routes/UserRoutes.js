@@ -1,6 +1,6 @@
 import {Router} from "express"
 import { upload } from "../middleware/MulterMiddleware.js"
-import { signUp,loginUser,refreshAccessToken, resetPassword, googleAuth,logoutUser } from "../controllers/UserControllers.js"
+import { signUp,loginUser,refreshAccessToken, resetPassword, googleAuth,logoutUser ,getCurrentUser} from "../controllers/UserControllers.js"
 import { verifyJWT } from "../middleware/AuthMiddleware.js"
 
 
@@ -21,7 +21,10 @@ userRouter.post('/refresh-token',refreshAccessToken)
 
 userRouter.post('/google', googleAuth)
 
+//protected route
 userRouter.post('/logout',verifyJWT,logoutUser)
+
+userRouter.get("/me", verifyJWT, getCurrentUser);
 
 export {userRouter}
 

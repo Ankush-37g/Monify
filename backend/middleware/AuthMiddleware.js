@@ -2,6 +2,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import jwt from "jsonwebtoken";
 import { User } from "../models/UserModel.js";
+import { refreshAccessToken } from "../controllers/UserControllers.js";
 
 // Middleware to verify JSON Web Token (JWT)
 //in this middleware res is not in use so we c replace it with underscore _
@@ -36,7 +37,25 @@ export const verifyJWT = asyncHandler(async (req, _ , next) => {
         next();
 
     } catch (error) {
-         
-        throw new ApiError(401,error?.message || "Invalid message token")
+        
+        try {
+
+            const refreshToken = req.cookies?.refreshToken 
+            
+            if(refreshToken)
+            {
+              refreshAccessToken(req,res,next)  
+            }
+            else
+            {
+                throw new ApiError(401, error?.message || "Invalid access token");
+            }
+              
+
+        } catch (error) {
+            throw new ApiError(401,error?.message || "Invalid message token")
+        }
+           
+        
     }
 });

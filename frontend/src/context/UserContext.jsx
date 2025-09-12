@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import {toast} from "react-toastify"
 import api from "../utils/Api.js";
 
-
 export const UserContext = createContext();
 
 const UserContextProvider = ({children}) => {
@@ -178,26 +177,40 @@ const UserContextProvider = ({children}) => {
           }
     }
 
+    const checkLogin = async () => {
+        setIsLoading(true);
+        try {
+        const res = await api.get("/user/me"); 
+        if (res.data?.success) {
+            setUser(res.data.data); 
+            localStorage.setItem("user", JSON.stringify(res.data.data));
+        }
+        } catch (err) {
+            setUser(null);
+            localStorage.removeItem("user");
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
-    
-    useEffect( ()=> {
-   
-          const storedUser = localStorage.getItem("user")
+    useEffect(() => {
+        checkLogin();
+    }, []);
 
-          if(user || storedUser)
-          {
-             getIncomeData()
-
-             getExpenseData()
-
-             getBudgetData() 
         
-          }
+    useEffect( ()=> {
+    
+        if(user)
+        {
+            getIncomeData()
 
+            getExpenseData()
+
+            getBudgetData() 
+        }
     },[user])
 
     useEffect(() => {
-
         getTotalIncome();
         getTotalExpense();
 

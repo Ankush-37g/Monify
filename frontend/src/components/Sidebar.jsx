@@ -65,7 +65,9 @@ const Sidebar = () => {
             className="object-cover w-full h-full"
           />
         </div>
-        <h2 className="text-xl font-bold text-white mb-8">{localStorage.getItem("user")}</h2>
+        <h2 className="text-xl font-bold text-white mb-8">
+          {JSON.parse(localStorage.getItem("user"))?.user?.name}
+        </h2>
       </div>
 
       {/* Navigation Links */}

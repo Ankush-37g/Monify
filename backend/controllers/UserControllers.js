@@ -226,28 +226,28 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
       }
 
       try {
-      const decodedToken = jwt.verify(
-            storedRefreshToken,
-            process.env.REFRESH_TOKEN_SECRET
-      );
+            const decodedToken = jwt.verify(
+                  storedRefreshToken,
+                  process.env.REFRESH_TOKEN_SECRET
+            );
 
-      const user = await User.findById(decodedToken._id);
+            const user = await User.findById(decodedToken._id);
 
-      if (!user) {
-            throw new ApiError(401, "Invalid refresh token");
-      }
+            if (!user) {
+                  throw new ApiError(401, "Invalid refresh token");
+            }
 
-      if (storedRefreshToken !== user.refreshToken) {
-            throw new ApiError(401, "RefreshToken mismatch");
-      }
+            if (storedRefreshToken !== user.refreshToken) {
+                  throw new ApiError(401, "RefreshToken mismatch");
+            }
 
-      
-      const accessToken = user.generateAccessToken(user._id);
+            
+            const accessToken = user.generateAccessToken(user._id);
 
-      return res
-            .status(200)
-            .cookie("accessToken", accessToken, cookieOptions)
-            .json(new ApiResponse(200, null, "Access Token refreshed"));
+            return res
+                  .status(200)
+                  .cookie("accessToken", accessToken, cookieOptions)
+                  .json(new ApiResponse(200, null, "Access Token refreshed"));
 
       } catch (error) {
 
@@ -283,4 +283,21 @@ const resetPassword = asyncHandler( async(req,res) => {
 
 })
 
-export {signUp,loginUser,refreshAccessToken,resetPassword,googleAuth,logoutUser}
+const getCurrentUser = asyncHandler(async (req, res) => {
+  if (!req.user) {
+    throw new ApiError(401, "Not authorized");
+  }
+
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        { user: req.user },
+        "User fetched successfully"
+      )
+    );
+});
+
+
+export {signUp,loginUser,refreshAccessToken,resetPassword,googleAuth,logoutUser,getCurrentUser}

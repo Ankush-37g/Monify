@@ -15,14 +15,32 @@ import { useContext } from 'react';
 import { UserContext } from './context/UserContext.jsx';
 
 const AppContent = () => {
-  const { isLoading } = useContext(UserContext);
+  const { isLoading,user } = useContext(UserContext);
+
+  const localUser = localStorage.getItem("user");
+  const currentUser = user || (localUser ? JSON.parse(localUser) : null);
   
   return (
     <div className='h-screen'>
       {isLoading && <LoadingSpinner />}
+
+
       <Routes>
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/login" element={<Login />} />
+
+       <Route
+          path="/"
+          element={
+            currentUser ? <Navigate to="/dashboard" replace /> : <LandingPage />
+          }
+        />
+        <Route
+          path="/login"
+          element={
+            currentUser ? <Navigate to="/dashboard" replace /> : <Login />
+          }
+        />
+
+
         <Route element={<DashboardLayout />}>
           <Route path="/Dashboard" element={<Dashboard />} />
           <Route path="/Income" element={<Income />} />

@@ -21,9 +21,9 @@ const Header = () => {
 
           if(response.data.success)
           {
-              navigate('/login')
+              navigate('/')
 
-              setUser("")
+              setUser(null)
 
               localStorage.removeItem("user")
           }

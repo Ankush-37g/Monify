@@ -52,9 +52,9 @@ const Login = () => {
 
             if(response.data.success)
             {
-              setUser(response.data.data.user.name)
+              setUser(response.data.data)
 
-              localStorage.setItem('user',response.data.data.user.name)
+              localStorage.setItem('user',JSON.stringify(response.data.data.user))
 
               toast.success("Login Successfull")
 
@@ -240,8 +240,8 @@ const Login = () => {
                           console.log(response.data)
 
                           if (response.data.success) {
-                            setUser(response.data.data.user.name);
-                            localStorage.setItem('user',response.data.data.user.name)
+                            setUser(response.data.data);
+                            localStorage.setItem('user',JSON.stringify(response.data.data.user))
                             toast.success("Login Successful with Google");
                             navigate("/dashboard");
                           } else {
