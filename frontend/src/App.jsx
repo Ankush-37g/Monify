@@ -10,38 +10,37 @@ import Report from './pages/Report.jsx'
 import UserContextProvider from './context/UserContext.jsx';
 import LandingPage from './pages/LandingPage.jsx';
 import { ToastContainer } from "react-toastify";
+import LoadingSpinner from './components/LoadingSpinner.jsx';
+import { useContext } from 'react';
+import { UserContext } from './context/UserContext.jsx';
+
+const AppContent = () => {
+  const { isLoading } = useContext(UserContext);
+  
+  return (
+    <div className='h-screen'>
+      {isLoading && <LoadingSpinner />}
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/login" element={<Login />} />
+        <Route element={<DashboardLayout />}>
+          <Route path="/Dashboard" element={<Dashboard />} />
+          <Route path="/Income" element={<Income />} />
+          <Route path="/Expense" element={<Expense />} />
+          <Route path="/Budget" element={<Budget />} />
+          <Route path="/report" element={<Report />} />
+        </Route>
+      </Routes>
+      <ToastContainer position="top-right" autoClose={3000} />
+    </div>
+  );
+};
 
 const App = () => {
-
   return (
-
-   <UserContextProvider>
-
-     <div className='h-screen'>
-        
-           <Routes>
-
-              <Route path="/" element={<LandingPage />} />
-              <Route path="/login" element = {<Login />}/>
-
-              <Route element={<DashboardLayout/>}>
-                 <Route path="/Dashboard" element={<Dashboard />} />
-                 <Route path="/Income" element={<Income />} />
-                 <Route path="/Expense" element={<Expense />} />
-                 <Route path="/Budget" element={<Budget />} />
-                 <Route path="/report" element={<Report />} />
-              </Route>
-          
-
-           </Routes>
-
-           <ToastContainer position="top-right" autoClose={3000} />
-        
-     </div>
-
+    <UserContextProvider>
+      <AppContent />
     </UserContextProvider>
-  )
-}
-
-
+  );
+};
 export default App

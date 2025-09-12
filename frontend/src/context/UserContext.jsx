@@ -7,10 +7,9 @@ import api from "../utils/Api.js";
 export const UserContext = createContext();
 
 const UserContextProvider = ({children}) => {
-
-
     const navigate = useNavigate()
-
+    
+    const [isLoading, setIsLoading] = useState(false)
     const [balance, setBalance] = useState(null)
 
     const [totalIncome, setTotalIncome] = useState(null)
@@ -38,6 +37,27 @@ const UserContextProvider = ({children}) => {
         return newUrl;
     })
 
+    const checkBudgetLimits = (newExpense) => {
+        budgets.forEach(budget => {
+            if (budget.category === newExpense.expenseCategory) {
+                const categoryExpenses = expenses
+                    .filter(e => e.expenseCategory === budget.category)
+                    .reduce((sum, e) => sum + e.amount, 0);
+                
+                const newTotal = categoryExpenses + newExpense.amount;
+                const percentage = (newTotal / budget.amount) * 100;
+
+                if (percentage >= 100) {
+                    toast.error(`Budget exceeded for ${budget.category}! You've spent ${percentage.toFixed(1)}% of your budget.`);
+                } else if (percentage >= 80) {
+                    toast.warning(`Warning: You've used ${percentage.toFixed(1)}% of your ${budget.category} budget.`);
+                } else if (percentage >= 50) {
+                    toast.info(`Note: You've used ${percentage.toFixed(1)}% of your ${budget.category} budget.`);
+                }
+            }
+        });
+    }
+
     const value = {
         navigate,
         balance,
@@ -54,7 +74,10 @@ const UserContextProvider = ({children}) => {
         budgets,
         setBudgets,
         avatarUrl,
-        setAvatarUrl
+        setAvatarUrl,
+        checkBudgetLimits,
+        isLoading,
+        setIsLoading
     }
 
     const getTotalIncome = () => {
@@ -105,7 +128,7 @@ const UserContextProvider = ({children}) => {
           try {
             const response = await api.post('/expense/list',{});
 
-            console.log(response.data);
+            // console.log(response.data);
 
             if(response.data.success)
             {
@@ -134,7 +157,7 @@ const UserContextProvider = ({children}) => {
           try {
             const response = await api.post('/budget/list',{});
 
-            console.log(response.data);
+            // console.log(response.data);
 
             if(response.data.success)
             {  

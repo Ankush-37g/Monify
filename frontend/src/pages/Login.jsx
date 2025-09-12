@@ -16,12 +16,12 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
-  const {navigate,setUser,user} =  useContext(UserContext)
+  const {navigate, setUser, user, setIsLoading} =  useContext(UserContext)
 
   // A simple function to handle the form submission.
   const handleSubmit = async(e) => {
-
       e.preventDefault();
+      setIsLoading(true);
 
       try {
         if(currentState === "signUp")
@@ -83,9 +83,9 @@ const Login = () => {
               // Network or other error
               console.log(error.message)
           }
+      } finally {
+          setIsLoading(false);
       }
-      
-      
   };
 
   
@@ -216,38 +216,35 @@ const Login = () => {
               <div className='mt-6 flex items-center justify-center '>
 
                   <GoogleLogin
-
                       onSuccess={async (credentialResponse) => {
+                        setIsLoading(true);
+                        try {
+                          const response = await api.post(
+                            "/user/google",
+                            {
+                              token: credentialResponse.credential,
+                            },
+                          );
 
-                        const response = await api.post(
+                          console.log(response.data)
 
-                          "/user/google",
-                          {
-                            token: credentialResponse.credential, // 👈 this is the id_token
-                          },
-                          
-                        );
-
-                        console.log(response.data)
-
-                        if (response.data.success) {
-
-                          setUser(response.data.data.user.name);
-
-                          localStorage.setItem('user',response.data.data.user.name)
-
-                          toast.success("Login Successful with Google");
-
-                          navigate("/dashboard");
-
-                        } else {
-
-                          toast.error("Google login failed on backend");
+                          if (response.data.success) {
+                            setUser(response.data.data.user.name);
+                            localStorage.setItem('user',response.data.data.user.name)
+                            toast.success("Login Successful with Google");
+                            navigate("/dashboard");
+                          } else {
+                            toast.error("Google login failed on backend");
+                          }
+                        } catch (error) {
+                          toast.error(error.response?.data?.message || "Google login failed");
+                        } finally {
+                          setIsLoading(false);
                         }
                       }}
                       onError={() => {
-
                         toast.error("Google Login Cancelled/Failed");
+                        setIsLoading(false);
                       }}
                  />
 

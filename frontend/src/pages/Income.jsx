@@ -12,6 +12,7 @@ import { useContext } from "react";
 import { UserContext } from "../context/UserContext.jsx";
 import { toast } from "react-toastify";
 import api from "../utils/Api.js";
+import { set } from "mongoose";
 
 const Income = () => {
 
@@ -96,12 +97,12 @@ const Income = () => {
   const onSubmitHandler = async(e) => {
 
         e.preventDefault()
-
+        setIsLoading(true)
        try {
          
           const response = await api.post('/income/add', {incomeSource,amount,date,isRecurring,frequency});
 
-          console.log(response.data)
+          // console.log(response.data)
 
           if(response.data.success)
           {
@@ -109,6 +110,13 @@ const Income = () => {
 
               setIncomes((prev) => [...prev,response.data.data])
               
+              setIncomeSource("")
+              setAmount("")
+              setDate("")
+              setIsRecurring(false)
+              setFrequency(null)
+
+              setIsOpen(false)
           }
        } catch (error) {
         
@@ -121,13 +129,15 @@ const Income = () => {
             toast.error(error.message || "Network Error");
             console.log(error.message);
            }
+       }finally{
+          setIsLoading(false)
        }
       
        
       
   }
   const handleDeleteIncome = async(id) => {
-        
+    setIsLoading(true) 
     try {
 
       const response = await api.post('/income/delete',{id})
@@ -152,6 +162,9 @@ const Income = () => {
             toast.error(error.message || "Network Error");
             console.log(error.message);
          }
+    }
+    finally{
+      setIsLoading(false)
     }
   }
                 

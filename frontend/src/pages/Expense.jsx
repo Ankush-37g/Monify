@@ -15,7 +15,7 @@ import api from "../utils/Api.js";
 
 const Expense = () => {
 
-  const {expenses,setExpenses} = useContext(UserContext)
+  const {expenses, setExpenses, checkBudgetLimits, setIsLoading} = useContext(UserContext)
 
   const [isOpen, setIsOpen] = useState(false)
 
@@ -90,39 +90,51 @@ const Expense = () => {
   };
 
   const onSubmitHandler = async(e) => {
-
         e.preventDefault()
-
-       try {
-         
+        setIsLoading(true)
+        try {
           const response = await api.post('/expense/add', {expenseCategory,amount,date,isRecurring,frequency});
 
-          console.log(response.data)
+          // console.log(response.data)
 
           if(response.data.success)
           {
-              toast.success(response.data.message)
-
-              setExpenses((prev) => [...prev,response.data.data])
+              const newExpense = response.data.data;
               
+              // Check budget limits before adding expense
+              checkBudgetLimits(newExpense);
+
+              setExpenses((prev) => [...prev, newExpense]);
+              toast.success(response.data.message);
+              
+              // Reset form fields
+              setExpenseCategory("");
+              setAmount("");
+              setDate("");
+              setIsRecurring(false);
+              setFrequency(null);
+              
+              // Close the modal
+              setIsOpen(false);
           }
        } catch (error) {
-        
            if (error.response && error.response.data) {
-
             toast.error(error.response.data.message || "Something went wrong!");
             console.log(error.response.data);
-           } else
-           {
+           } else {
             toast.error(error.message || "Network Error");
             console.log(error.message);
            }
+       } finally {
+           setIsLoading(false);
        }
       
        
       
   }
   const handleDeleteExpense = async(id) => {
+
+    setIsLoading(true)
         
     try {
 
@@ -148,6 +160,8 @@ const Expense = () => {
             toast.error(error.message || "Network Error");
             console.log(error.message);
          }
+    }finally {
+        setIsLoading(false);
     }
   }  
 
@@ -251,7 +265,7 @@ const Expense = () => {
 
 
           {/* Add Expense Modal */}
-          <div className={`fixed inset-0 flex justify-center items-center z-50 px-4 transition-opacity duration-300 ${
+          <div className={`fixed text-black inset-0 flex justify-center items-center z-50 px-4 transition-opacity duration-300 ${
               isOpen ? "opacity-100 visible bg-black/50 backdrop-blur-sm" : "opacity-0 invisible"
           }`}>
             <div className={`bg-gray-200 rounded-xl p-4 sm:p-5 shadow-lg w-full max-w-md mx-auto transform transition-transform duration-300 ${

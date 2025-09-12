@@ -11,7 +11,7 @@ import api from '../utils/Api.js';
 
 const Budgets = () => {
 
-  const {budgets,setBudgets,expenses} = useContext(UserContext)
+  const {budgets, setBudgets, expenses, setIsLoading} = useContext(UserContext)
 
   const [isOpen, setIsOpen] = useState(false)
 
@@ -82,7 +82,7 @@ const Budgets = () => {
          
           const response = await api.post('/budget/add', {category,amount,month});
 
-          console.log(response.data)
+          // console.log(response.data)
 
           if(response.data.success)
           {
@@ -90,6 +90,13 @@ const Budgets = () => {
 
               setBudgets((prev) => [...prev,response.data.data])
               
+              // Reset form fields
+              setCategory("");
+              setAmount("");
+              setMonth("");
+              
+              // Close the modal
+              setIsOpen(false);
           }
        } catch (error) {
         
@@ -109,9 +116,8 @@ const Budgets = () => {
   }  
 
   const handleDeleteBudget = async(id) => {
-        
+    setIsLoading(true)
     try {
-
       const response = await api.post('/budget/delete',{id})
 
       console.log(response.data)
@@ -134,6 +140,8 @@ const Budgets = () => {
             toast.error(error.message || "Network Error");
             console.log(error.message);
          }
+    } finally {
+      setIsLoading(false);
     }
   }
   
@@ -251,7 +259,7 @@ const Budgets = () => {
           </div>
 
           {/* Add Budget Modal */}
-          <div className={`fixed inset-0 flex justify-center items-center z-50 px-4 transition-opacity duration-300 ${
+          <div className={`fixed text-black inset-0 flex justify-center items-center z-50 px-4 transition-opacity duration-300 ${
               isOpen ? "opacity-100 visible bg-black/50 backdrop-blur-sm" : "opacity-0 invisible"
           }`}>
             <div className={`bg-gray-200 rounded-xl p-4 sm:p-5 shadow-lg w-full max-w-md mx-auto transform transition-transform duration-300 ${
