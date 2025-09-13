@@ -102,7 +102,7 @@ const setupRecurringTransactionsJob = () => {
           // Send email notification
           if (user && user.email) {
 
-            await sendEmail(
+              sendEmail(
               expense.user.email,
               "Recurring Expense Added",
               `Your recurring expense "${expense.expenseCategory}" of ₹${expense.amount} has been added on ${today.toDateString()}.`

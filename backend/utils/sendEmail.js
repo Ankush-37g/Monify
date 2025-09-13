@@ -13,7 +13,9 @@ const transporter = nodemailer.createTransport({
 const sendEmail = asyncHandler( async (to, subject, text) => {
       
       const user  = await User.findById(to)
+
       if (!user || !user.email) return;
+      
       await transporter.sendMail({
          from: process.env.EMAIL_USER,
          to,

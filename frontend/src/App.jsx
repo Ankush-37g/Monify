@@ -27,11 +27,8 @@ const AppContent = () => {
 
       <Routes>
 
-       <Route
-          path="/"
-          element={
-            currentUser ? <Navigate to="/dashboard" replace /> : <LandingPage />
-          }
+        <Route
+          path="/" element={<LandingPage />}
         />
         <Route
           path="/login"
@@ -40,13 +37,16 @@ const AppContent = () => {
           }
         />
 
-
-        <Route element={<DashboardLayout />}>
-          <Route path="/Dashboard" element={<Dashboard />} />
-          <Route path="/Income" element={<Income />} />
-          <Route path="/Expense" element={<Expense />} />
-          <Route path="/Budget" element={<Budget />} />
-          <Route path="/report" element={<Report />} />
+        <Route
+          element={
+            currentUser ? <DashboardLayout /> : <Navigate to="/" replace />
+          }
+        >
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/income" element={<Income />} />
+          <Route path="/expense" element={<Expense />} />
+          <Route path="/budget" element={<Budget />} />
+          
         </Route>
       </Routes>
       <ToastContainer position="top-right" autoClose={3000} />

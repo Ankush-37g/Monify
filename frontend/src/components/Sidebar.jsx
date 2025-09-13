@@ -1,9 +1,12 @@
 import React from 'react';
 import { FaMoneyBillWave, FaChartPie, FaHandHoldingUsd  } from 'react-icons/fa';
+import { RiLogoutBoxLine } from "react-icons/ri";
 import { MdOutlineSpaceDashboard } from "react-icons/md";
 import { Link, useLocation } from 'react-router-dom';
 import { useState, useContext, useEffect } from 'react';
 import { UserContext } from '../context/UserContext';
+import api from '../utils/Api.js';
+import { toast } from 'react-toastify';
 
 const Sidebar = () => {
 
@@ -11,7 +14,7 @@ const Sidebar = () => {
 
   const [activeIndex, setActiveIndex] = useState(null)
 
-  const {user, avatarUrl, setAvatarUrl} = useContext(UserContext)
+  const {user,setUser, avatarUrl, setAvatarUrl,navigate} = useContext(UserContext)
   
   useEffect(() => {
 
@@ -30,28 +33,44 @@ const Sidebar = () => {
   }, [setAvatarUrl]);
 
   const navItems = [
-    {
-      name: 'Dashboard',
-      icon: <MdOutlineSpaceDashboard className="text-xl" />,
-    
-    },
-    {
-      name: 'Income',
-      icon: <FaMoneyBillWave className="text-xl" />,
-      
-    },
-    {
-      name: 'Expense',
-      icon: <FaChartPie className="text-xl" />,
-    
-    },
-    {
-      name: 'Budget',
-      icon: <FaHandHoldingUsd className='text-xl' />
-    
-    },
+    { name: 'Dashboard', icon: <MdOutlineSpaceDashboard className="text-xl" /> },
+    { name: 'Income', icon: <FaMoneyBillWave className="text-xl" /> },
+    { name: 'Expense', icon: <FaChartPie className="text-xl" /> },
+    { name: 'Budget', icon: <FaHandHoldingUsd className="text-xl" /> },
     
   ];
+
+  const handleLogout = async() => {
+  
+         try {
+            const response = await api.post('/user/logout');
+  
+            console.log(response.data)
+  
+            if(response.data.success)
+            {
+    
+                setUser(null)
+  
+                localStorage.removeItem("user")
+
+                navigate('/')
+            }
+         } catch (error) {
+  
+              if (error.response) {
+                  // This will log your backend's JSON error message
+                  console.log(error.response.data);
+                  toast.error(error.response.data.message)
+                  
+              } else {
+                  // Network or other error
+                  console.log(error.message)
+              }
+         }
+          
+         
+  }
 
   return (
 
@@ -65,8 +84,15 @@ const Sidebar = () => {
             className="object-cover w-full h-full"
           />
         </div>
-        <h2 className="text-xl font-bold text-white mb-8">
-          {JSON.parse(localStorage.getItem("user"))?.user?.name}
+          <h2 className="text-xl font-bold text-white mb-8">
+          {(() => {
+            try {
+              const userData = JSON.parse(localStorage.getItem("user"));
+              return userData?.user?.name || "User";
+            } catch (e) {
+              return "User";
+            }
+          })()}
         </h2>
       </div>
 
@@ -77,9 +103,7 @@ const Sidebar = () => {
 
           {navItems.map((item, index) => {
 
-            const isActive = activeIndex === index || location.pathname === `/${item.name}`;
-
-            return (
+            const isActive = activeIndex === index || location.pathname.toLowerCase() === `/${item.name.toLowerCase()}`;            return (
 
               <li key={index}>
 
@@ -88,7 +112,7 @@ const Sidebar = () => {
 
                   onClick={() => {
                     setActiveIndex(index);
-                    navigate("/item.name");
+                    navigate(`/${item.name.toLowerCase()}`);  
                   }}
 
                   className={`flex items-center space-x-4 p-3 rounded-xl w-full text-left transition-colors duration-200 
@@ -101,6 +125,16 @@ const Sidebar = () => {
               </li>
             );
           })}
+          {/* Logout button */}
+          <li>
+            <button
+              onClick={handleLogout}
+              className="flex items-center space-x-4 p-3 rounded-xl w-full text-left text-gray-300 hover:bg-gray-800 hover:text-white transition-colors duration-200"
+            >
+              <RiLogoutBoxLine className="text-xl" />
+              <span className="font-semibold text-lg">Logout</span>
+            </button>
+          </li>
         </ul>
       </nav>
     </div>

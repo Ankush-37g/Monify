@@ -185,6 +185,9 @@ const UserContextProvider = ({children}) => {
             setUser(res.data.data); 
             localStorage.setItem("user", JSON.stringify(res.data.data));
         }
+        else{
+            navigate('/');
+        }
         } catch (err) {
             setUser(null);
             localStorage.removeItem("user");
