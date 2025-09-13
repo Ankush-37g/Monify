@@ -183,7 +183,7 @@ const Budgets = () => {
     
               </div>
 
-              <div className='grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 mt-6 gap-3'>
+              <div className='grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 mt-6 md:gap-3 gap-1'>
                      
                      
                     {
@@ -209,7 +209,7 @@ const Budgets = () => {
                           }
 
                           return (
-                            <div key={index} className="backdrop-blur-sm bg-gray-800/70 p-6 rounded-2xl shadow-lg border border-gray-700">
+                            <div key={index} className="backdrop-blur-sm bg-gray-800/70  md:p-6 p-2 rounded-2xl shadow-lg border border-gray-700">
 
                               <div className="flex flex-col md:flex-row md:justify-between md:items-center space-y-4 md:space-y-0 group">
 
