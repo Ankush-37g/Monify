@@ -14,7 +14,7 @@ const Sidebar = () => {
 
   const [activeIndex, setActiveIndex] = useState(null)
 
-  const {user,setUser, avatarUrl, setAvatarUrl,navigate} = useContext(UserContext)
+  const {user,setUser, avatarUrl, setAvatarUrl,navigate,setVisible} = useContext(UserContext)
   
   useEffect(() => {
 
@@ -112,7 +112,9 @@ const Sidebar = () => {
 
                   onClick={() => {
                     setActiveIndex(index);
-                    navigate(`/${item.name.toLowerCase()}`);  
+                    navigate(`/${item.name.toLowerCase()}`);
+                    setVisible(false); 
+                     
                   }}
 
                   className={`flex items-center space-x-4 p-3 rounded-xl w-full text-left transition-colors duration-200 
