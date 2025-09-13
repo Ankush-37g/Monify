@@ -4,6 +4,12 @@ import { Expense } from "../models/ExpenseModel.js";
 import { User } from "../models/UserModel.js";
 import sendEmail from "./sendEmail.js";
 
+export const initCronJobs = () => {
+  // Initialize the cron jobs
+  setupRecurringTransactionsJob();
+  console.log("Cron jobs setup completed");
+};
+
 const updateNextDate = (currentDate, frequency) => {
   const newDate = new Date(currentDate);
   switch (frequency) {
@@ -25,7 +31,8 @@ const updateNextDate = (currentDate, frequency) => {
   return newDate;
 };
 
-cron.schedule("0 0 * * *", async () => {
+const setupRecurringTransactionsJob = () => {
+  cron.schedule("0 0 * * *", async () => {
 
   console.log("Running recurring job");
 
@@ -110,7 +117,7 @@ cron.schedule("0 0 * * *", async () => {
     console.log("Recurring job completed successfully.");
 
   } catch (err) {
-    
     console.error("Error running recurring job:", err.message);
   }
-});
+  });
+};

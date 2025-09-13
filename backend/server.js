@@ -3,6 +3,7 @@ import cors from "cors"
 import dotenv from "dotenv"
 import cookieParser from "cookie-parser"
 import { connectDB } from "./database/db.js"
+import { initCronJobs } from "./utils/cronJobs.js"  // Import initialization function
 
 //to load environment variables from .env file into process.env
 dotenv.config({
@@ -15,11 +16,13 @@ connectDB()
 .then(()=>{
     app.listen(process.env.PORT || 5000 , ()=>{
         console.log(`Server is running on port : ${process.env.PORT}`)
+        // Initialize cron jobs after server starts
+        initCronJobs();
+        console.log("Cron jobs initialized successfully");
     })
 })
 .catch((error)=>{
-
-  console.log("MongoDB connection failed ...",error)
+    console.log("MongoDB connection failed ...",error)
 })
 
     
@@ -44,7 +47,6 @@ import { incomeRouter } from "./routes/IncomeRoutes.js"
 import { errorHandler } from "./middleware/ErrorHandler.js"
 import { expenseRouter } from "./routes/ExpenseRoutes.js"
 import { budgetRouter } from "./routes/BudgetRoutes.js"
-
 
 
 app.use('/api/user',userRouter)
