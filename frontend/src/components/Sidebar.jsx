@@ -103,7 +103,7 @@ const Sidebar = () => {
 
           {navItems.map((item, index) => {
 
-            const isActive = activeIndex === index || location.pathname.toLowerCase() === `/${item.name.toLowerCase()}`;            return (
+            const isActive = activeIndex === index || window.location.pathname.toLowerCase() === `/${item.name.toLowerCase()}`;            return (
 
               <li key={index}>
 

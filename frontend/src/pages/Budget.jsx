@@ -215,7 +215,7 @@ const Budgets = () => {
 
                                 <div className='flex flex-row items-center gap-3'>
                                      <h3 className="text-xl font-bold text-blue-400">{budget.category}</h3>
-                                     <RiDeleteBin6Line onClick={()=>handleDeleteBudget(budget._id)} className="hidden group-hover:block w-4 h-4 cursor-pointer "/>
+                                     <RiDeleteBin6Line onClick={()=>handleDeleteBudget(budget._id)} className="sm:hidden group-hover:block w-4 h-4 cursor-pointer "/>
                                 </div>
                                 
 

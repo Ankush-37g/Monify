@@ -236,7 +236,7 @@ const Income = () => {
 
                               <div className="flex items-center gap-8">
 
-                                <RiDeleteBin6Line onClick={()=>handleDeleteIncome(income._id)} className="hidden group-hover:block w-5 h-5 cursor-pointer "/>
+                                <RiDeleteBin6Line onClick={()=>handleDeleteIncome(income._id)} className="sm:hidden group-hover:block w-5 h-5 cursor-pointer "/>
 
                                 <div className='px-3 py-1 bg-teal-600 flex items-center gap-2 rounded-xl'>
                                 

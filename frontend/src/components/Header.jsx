@@ -22,7 +22,7 @@ const Header = () => {
     }
     
     // If on dashboard, go to home, else go to dashboard
-    if (location === '/dashboard') {
+    if (location !== '/') {
       navigate('/');
     } else {
       navigate('/dashboard');
