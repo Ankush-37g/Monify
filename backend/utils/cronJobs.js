@@ -64,7 +64,7 @@ const setupRecurringTransactionsJob = () => {
           // Send email notification
           if (user && user.email) {
 
-            await sendEmail(
+              sendEmail(
               income.user.email,
               "Recurring Income Added",
               `Your recurring income "${income.incomeSource}" of ₹${income.amount} has been added on ${today.toDateString()}.`
