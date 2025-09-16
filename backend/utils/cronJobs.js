@@ -3,17 +3,23 @@ import { Income } from "../models/IncomeModel.js";
 import { Expense } from "../models/ExpenseModel.js";
 import { User } from "../models/UserModel.js";
 import sendEmail from "./sendEmail.js";
+import axios from "axios";
 
 
 // Keep server active by making a request every 10 minutes
 const setupKeepAliveJob = () => {
   cron.schedule("*/10 * * * *", async () => {
+
     try {
+
       console.log(`Ping server at: ${new Date().toLocaleString()}`);
       // Make a request to your own API
-      const response = await fetch("https://monify-backend.onrender.com/api/user/ping");
-      console.log(`Server pinged successfully: ${response.ok}`);
+      const response = await axios.get("https://monify-backend.onrender.com/api/user/ping");
+      console.log(`Server pinged successfully: ${response.status === 200}`);
+      console.log("Next ping scheduled in 10 minutes");
+
     } catch (error) {
+
       console.error("Error pinging server:", error.message);
     }
   });
@@ -80,12 +86,16 @@ const setupRecurringTransactionsJob = () => {
 
           // Send email notification
           if (user && user.email) {
-
-              sendEmail(
-              income.user.email,
-              "Recurring Income Added",
-              `Your recurring income "${income.incomeSource}" of ₹${income.amount} has been added on ${today.toDateString()}.`
-            );
+            try {
+              await sendEmail(
+                user.email,
+                "Recurring Income Added",
+                `Your recurring income "${income.incomeSource}" of ₹${income.amount} has been added on ${today.toDateString()}.`
+              );
+              console.log(`Email sent successfully for income: ${income._id}`);
+            } catch (emailError) {
+              console.error(`Failed to send email for income ${income._id}:`, emailError.message);
+            }
           }
         } 
         catch (err) 
@@ -118,12 +128,16 @@ const setupRecurringTransactionsJob = () => {
 
           // Send email notification
           if (user && user.email) {
-
-              sendEmail(
-              expense.user.email,
-              "Recurring Expense Added",
-              `Your recurring expense "${expense.expenseCategory}" of ₹${expense.amount} has been added on ${today.toDateString()}.`
-            );
+            try {
+              await sendEmail(
+                user.email,
+                "Recurring Expense Added",
+                `Your recurring expense "${expense.expenseCategory}" of ₹${expense.amount} has been added on ${today.toDateString()}.`
+              );
+              console.log(`Email sent successfully for expense: ${expense._id}`);
+            } catch (emailError) {
+              console.error(`Failed to send email for expense ${expense._id}:`, emailError.message);
+            }
           }
         } catch (err) {
           console.error(`Failed to process expense ${expense._id}:`, err.message);

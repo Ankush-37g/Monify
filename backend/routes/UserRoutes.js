@@ -27,7 +27,7 @@ userRouter.post('/logout',verifyJWT,logoutUser)
 userRouter.get("/me", verifyJWT, getCurrentUser);
 
 // Ping endpoint to keep server active
-userRouter.post("/ping", pingServer);
+userRouter.get("/ping", pingServer);
 
 export {userRouter}
 
