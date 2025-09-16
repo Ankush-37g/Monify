@@ -1,6 +1,6 @@
 import {Router} from "express"
 import { upload } from "../middleware/MulterMiddleware.js"
-import { signUp,loginUser,refreshAccessToken, resetPassword, googleAuth,logoutUser ,getCurrentUser} from "../controllers/UserControllers.js"
+import { signUp,loginUser,refreshAccessToken, resetPassword, googleAuth,logoutUser ,getCurrentUser, pingServer} from "../controllers/UserControllers.js"
 import { verifyJWT } from "../middleware/AuthMiddleware.js"
 
 
@@ -25,6 +25,9 @@ userRouter.post('/google', googleAuth)
 userRouter.post('/logout',verifyJWT,logoutUser)
 
 userRouter.get("/me", verifyJWT, getCurrentUser);
+
+// Ping endpoint to keep server active
+userRouter.post("/ping", pingServer);
 
 export {userRouter}
 

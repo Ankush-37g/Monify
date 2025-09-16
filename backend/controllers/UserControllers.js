@@ -300,4 +300,8 @@ const getCurrentUser = asyncHandler(async (req, res) => {
 });
 
 
-export {signUp,loginUser,refreshAccessToken,resetPassword,googleAuth,logoutUser,getCurrentUser}
+const pingServer = asyncHandler(async (req, res) => {
+    return res.status(200).json(new ApiResponse(200, null, "Server is alive"));
+});
+
+export {signUp,loginUser,refreshAccessToken,resetPassword,googleAuth,logoutUser,getCurrentUser,pingServer}

@@ -4,10 +4,27 @@ import { Expense } from "../models/ExpenseModel.js";
 import { User } from "../models/UserModel.js";
 import sendEmail from "./sendEmail.js";
 
+
+// Keep server active by making a request every 10 minutes
+const setupKeepAliveJob = () => {
+  cron.schedule("*/10 * * * *", async () => {
+    try {
+      console.log(`Ping server at: ${new Date().toLocaleString()}`);
+      // Make a request to your own API
+      const response = await fetch("https://monify-backend.onrender.com/api/user/ping");
+      console.log(`Server pinged successfully: ${response.ok}`);
+    } catch (error) {
+      console.error("Error pinging server:", error.message);
+    }
+  });
+};
+
 export const initCronJobs = () => {
-  // Initialize the cron jobs
   setupRecurringTransactionsJob();
-  console.log("Cron jobs setup completed");
+  setupKeepAliveJob();
+  console.log(`Cron jobs initialized at: ${new Date().toLocaleString()}`);
+  console.log("Recurring transactions job will run at midnight");
+  console.log("Keep-alive job will run every 10 minutes");
 };
 
 const updateNextDate = (currentDate, frequency) => {

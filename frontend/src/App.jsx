@@ -2,19 +2,22 @@
 import {Routes, Route, Navigate } from 'react-router-dom'
 import DashboardLayout from './Layout/DashboardLayout'
 import Login from './pages/Login.jsx';
-import Dashboard from './pages/Dashboard.jsx';
-import Income from './pages/Income.jsx';
-import Expense from './pages/Expense.jsx';
-import Budget from './pages/Budget.jsx';
-import Report from './pages/Report.jsx'
+import {Suspense, lazy ,useContext} from 'react';
 import UserContextProvider from './context/UserContext.jsx';
 import LandingPage from './pages/LandingPage.jsx';
 import { ToastContainer } from "react-toastify";
 import LoadingSpinner from './components/LoadingSpinner.jsx';
-import { useContext } from 'react';
+
 import { UserContext } from './context/UserContext.jsx';
 
+const Dashboard = lazy(() => import('./pages/Dashboard.jsx'));
+const Income = lazy(() => import('./pages/Income.jsx'));
+const Expense = lazy(() => import('./pages/Expense.jsx'));
+const Budget = lazy(() => import('./pages/Budget.jsx'));
+const Report = lazy(() => import('./pages/Report.jsx'));
+
 const AppContent = () => {
+
   const { isLoading,user } = useContext(UserContext);
 
   const localUser = localStorage.getItem("user");
@@ -24,32 +27,38 @@ const AppContent = () => {
     <div className='h-screen'>
       {isLoading && <LoadingSpinner />}
 
+      <Suspense fallback={<LoadingSpinner />}>
 
-      <Routes>
+          <Routes>
+            
+              <Route
+                path="/" element={<LandingPage />}
+              />
+              <Route
+                path="/login"
+                element={
+                  currentUser ? <Navigate to="/dashboard" replace /> : <Login />
+                }
+              />
 
-        <Route
-          path="/" element={<LandingPage />}
-        />
-        <Route
-          path="/login"
-          element={
-            currentUser ? <Navigate to="/dashboard" replace /> : <Login />
-          }
-        />
+              <Route
+                element={
+                  currentUser ? <DashboardLayout /> : <Navigate to="/" replace />
+                }
+              >
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/income" element={<Income />} />
+                <Route path="/expense" element={<Expense />} />
+                <Route path="/budget" element={<Budget />} />
+                
+              </Route>
 
-        <Route
-          element={
-            currentUser ? <DashboardLayout /> : <Navigate to="/" replace />
-          }
-        >
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/income" element={<Income />} />
-          <Route path="/expense" element={<Expense />} />
-          <Route path="/budget" element={<Budget />} />
-          
-        </Route>
-      </Routes>
+          </Routes>
+
+      </Suspense>
+
       <ToastContainer position="top-right" autoClose={3000} />
+
     </div>
   );
 };
