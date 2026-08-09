@@ -32,9 +32,9 @@ app.use(cors({
 }))
 
 
-app.use(express.json({limit: "20kb"}))
+app.use(express.json({limit: "5mb"}))
 
-app.use(express.urlencoded({extended: true, limit:"20kb"}))
+app.use(express.urlencoded({extended: true, limit:"5mb"}))
 
 app.use(express.static("public"))
 
@@ -47,12 +47,14 @@ import { incomeRouter } from "./routes/IncomeRoutes.js"
 import { errorHandler } from "./middleware/ErrorHandler.js"
 import { expenseRouter } from "./routes/ExpenseRoutes.js"
 import { budgetRouter } from "./routes/BudgetRoutes.js"
+import { aiRouter } from "./routes/AiRoutes.js"
 
 
 app.use('/api/user',userRouter)
 app.use('/api/income',incomeRouter)
 app.use('/api/expense',expenseRouter)
 app.use('/api/budget',budgetRouter)
+app.use('/api/ai',aiRouter)
 
 app.get('/',(req,res)=> {res.send("Api working")})
 
