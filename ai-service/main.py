@@ -5,7 +5,7 @@ import re
 from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from mistralai import Mistral
+from mistralai.client import Mistral
 from dotenv import load_dotenv
 
 load_dotenv()

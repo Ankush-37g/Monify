@@ -2,6 +2,7 @@ import React from 'react';
 import { FaMoneyBillWave, FaChartPie, FaHandHoldingUsd  } from 'react-icons/fa';
 import { RiLogoutBoxLine } from "react-icons/ri";
 import { MdOutlineSpaceDashboard } from "react-icons/md";
+import { BsStars } from "react-icons/bs";
 import { Link, useLocation } from 'react-router-dom';
 import { useState, useContext, useEffect } from 'react';
 import { UserContext } from '../context/UserContext';
@@ -33,11 +34,11 @@ const Sidebar = () => {
   }, [setAvatarUrl]);
 
   const navItems = [
-    { name: 'Dashboard', icon: <MdOutlineSpaceDashboard className="text-xl" /> },
-    { name: 'Income', icon: <FaMoneyBillWave className="text-xl" /> },
-    { name: 'Expense', icon: <FaChartPie className="text-xl" /> },
-    { name: 'Budget', icon: <FaHandHoldingUsd className="text-xl" /> },
-    
+    { name: 'Dashboard', path: '/dashboard', icon: <MdOutlineSpaceDashboard className="text-xl" /> },
+    { name: 'Income',    path: '/income',    icon: <FaMoneyBillWave className="text-xl" /> },
+    { name: 'Expense',  path: '/expense',   icon: <FaChartPie className="text-xl" /> },
+    { name: 'Budget',   path: '/budget',    icon: <FaHandHoldingUsd className="text-xl" /> },
+    { name: 'AI Assistant', path: '/ai-assistant', icon: <BsStars className="text-xl text-teal-400" /> },
   ];
 
   const handleLogout = async() => {
@@ -103,16 +104,16 @@ const Sidebar = () => {
 
           {navItems.map((item, index) => {
 
-            const isActive = activeIndex === index || window.location.pathname.toLowerCase() === `/${item.name.toLowerCase()}`;            return (
+            const isActive = activeIndex === index || window.location.pathname.toLowerCase() === item.path.toLowerCase();            return (
 
               <li key={index}>
 
                 <Link 
-                  to={`/${item.name}`}
+                  to={item.path}
 
                   onClick={() => {
                     setActiveIndex(index);
-                    navigate(`/${item.name.toLowerCase()}`);
+                    navigate(item.path);
                     setVisible(false); 
                      
                   }}

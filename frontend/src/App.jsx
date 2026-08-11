@@ -15,6 +15,7 @@ const Income = lazy(() => import('./pages/Income.jsx'));
 const Expense = lazy(() => import('./pages/Expense.jsx'));
 const Budget = lazy(() => import('./pages/Budget.jsx'));
 const Report = lazy(() => import('./pages/Report.jsx'));
+const AiAssistant = lazy(() => import('./pages/AiAssistant.jsx'));
 
 const AppContent = () => {
 
@@ -50,6 +51,7 @@ const AppContent = () => {
                 <Route path="/income" element={<Income />} />
                 <Route path="/expense" element={<Expense />} />
                 <Route path="/budget" element={<Budget />} />
+                <Route path="/ai-assistant" element={<AiAssistant />} />
                 
               </Route>
 
