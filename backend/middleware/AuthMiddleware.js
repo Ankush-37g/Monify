@@ -6,7 +6,7 @@ import { refreshAccessToken } from "../controllers/UserControllers.js";
 
 // Middleware to verify JSON Web Token (JWT)
 //in this middleware res is not in use so we c replace it with underscore _
-export const verifyJWT = asyncHandler(async (req, _ , next) => {
+export const verifyJWT = asyncHandler(async (req, res , next) => {
 
     try {
         // Attempt to retrieve the token from either cookies or the 'Authorization' header
